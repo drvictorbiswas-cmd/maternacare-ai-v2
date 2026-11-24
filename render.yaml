@@ -5,10 +5,23 @@ services:
     plan: free
     region: singapore
     dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
     envVars:
+      - key: APP_ENV
+        value: production
       - key: JWT_SECRET
         generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: "https://maternacare-ai.onrender.com"
       - key: RAZORPAY_KEY_ID
         value: ""
       - key: RAZORPAY_KEY_SECRET
         value: ""
+      - key: RAZORPAY_WEBHOOK_SECRET
+        value: ""
+      - key: DATABASE_PATH
+        value: /app/data/maternacare.db
+    disk:
+      name: maternacare-data
+      mountPath: /app/data
+      sizeGB: 1
