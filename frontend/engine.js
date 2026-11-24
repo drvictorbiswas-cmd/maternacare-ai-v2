@@ -50,6 +50,8 @@ const STRINGS = {
     baby_hero_title:'Every Movement as Your Little Miracle',height:'Height',symptoms:'Symptoms',mood:'Mood',activity:'Activity',recent_symptoms:'Recent Symptoms',logged:'logged',symptom:'Symptom',mild:'Mild',moderate:'Moderate',strong:'Strong',prenatal_vitamins:'Prenatal Vitamins',kick_count:'Kick Count Session',
     daily_tracker:'Daily Tracker',daily_tracker_desc:'Apna Mood, Neend, Pani, Steps log karein aur progress dekhein',my_pregnancy:'Meri Pregnancy',day:'Din',
     baby_hero_title:'Har Harkat Aapke Chhote Chamatkar Ki Tarah',height:'Lambai',symptoms:'Lakshan',mood:'Mood',activity:'Activity',recent_symptoms:'Haal ke Lakshan',logged:'darz',symptom:'Lakshan',mild:'Halka',moderate:'Madhya',strong:'Tez',prenatal_vitamins:'Prenatal Vitamins',kick_count:'Kick Count Session',
+    sign_in_password:'Sign in with password',sign_in_otp:'Continue with OTP',password_min8:'Password must be at least 8 characters.',account_exists:'An account with this email or phone already exists. Please sign in.',wrong_credentials:'Wrong email/phone or password.',
+    sign_in_password:'Password se sign in',sign_in_otp:'OTP se aage badhein',password_min8:'Password kam se kam 8 akshar ka hona chahiye.',account_exists:'Is email ya phone se account pehle se hai. Sign in karein.',wrong_credentials:'Email/phone ya password galat hai.',
     account:'Account',demo_note:'Configure Firebase in fbcfg.js for real accounts.',
   },
   hi: {
@@ -132,6 +134,7 @@ const STRINGS = {
     imm_desc:'জন্ম তারিখ ভিত্তিক MoHFW তালিকা। ডোজ গৃহীত হিসেবে চিহ্নিত করুন।',mark_given:'গৃহীত চিহ্নিত',given_on:'দেওয়া হয়েছে',no_babies:'এখনো কোনো শিশু নেই। ট্র্যাক শুরু করতে একজন যোগ করুন।',select_baby:'প্রথমে একটি শিশু বেছে নিন।',
     daily_tracker:'ডেইলি ট্র্যাকার',daily_tracker_desc:'মood, ঘুম, পানি, পদক্ষেপ রেকর্ড করে অগ্রগতি দেখুন',my_pregnancy:'আমার গর্ভ',day:'দিন',
     baby_hero_title:'প্রতিটি নড়াচড়া আপনার ছোট্ট অলৌকিকতা',height:'উচ্চতা',symptoms:'লক্ষণ',mood:'মood',activity:'কার্যকলাপ',recent_symptoms:'সাম্প্রতিক লক্ষণ',logged:'রেকর্ড',symptom:'লক্ষণ',mild:'হালকা',moderate:'মাঝারি',strong:'শক্ত',prenatal_vitamins:'প্রসব-পূর্ব ভিটামিন',kick_count:'কিক কাউন্ট সেশন',
+    sign_in_password:'পাসওয়ার্ড দিয়ে সাইন ইন',sign_in_otp:'OTP দিয়ে এগিয়ে যান',password_min8:'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।',account_exists:'এই ইমেইল বা ফোনে অ্যাকাউন্ট আছে। সাইন ইন করুন।',wrong_credentials:'ইমেইল/ফোন বা পাসওয়ার্ড ভুল।',
     account:'অ্যাকাউন্ট',demo_note:'বাস্তব অ্যাকাউন্টের জন্য fbcfg.js-এ Firebase সেট করুন।',
   },
 };

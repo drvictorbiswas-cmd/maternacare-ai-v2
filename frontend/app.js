@@ -78,10 +78,19 @@ function showAuth(){ $('#authPage').classList.remove('hidden'); $$('.page').forE
 function setAuthMode(m){ authMode=m; $('#segLogin').classList.toggle('active',m==='login'); $('#segSignup').classList.toggle('active',m==='signup'); $('#authGo').textContent=tr(m==='login'?'sign_in':'sign_up'); $('#authErr').textContent=''; }
 $('#segLogin').addEventListener('click',()=>setAuthMode('login'));
 $('#segSignup').addEventListener('click',()=>setAuthMode('signup'));
+function friendlyError(err){
+  const m=err?.message||String(err);
+  if(m.includes('at least 8')) return tr('password_min8');
+  if(m.includes('already exists')) return tr('account_exists');
+  if(m.includes('Wrong credentials')) return tr('wrong_credentials');
+  return m;
+}
 $('#authGo').addEventListener('click',async ()=>{
+  if(busy) return;
   const ident=$('#authId').value.trim(), pass=$('#authPass').value;
-  if(!ident||pass.length<6){ $('#authErr').textContent=tr('email_required'); return; }
-  busy=true; $('#authGo').textContent='…';
+  if(!ident){ $('#authErr').textContent=tr('email_required'); return; }
+  if(pass.length<8){ $('#authErr').textContent=tr('password_min8'); return; }
+  busy=true; $('#authGo').textContent='…'; $('#authErr').textContent='';
   try{
     const data=await post(authMode==='login'?'/auth/login':'/auth/signup',{identifier:ident,password:pass});
     TOKEN=data.token; USER=data.user; localStorage.setItem('mc_token',TOKEN); localStorage.setItem('mc_user',JSON.stringify(USER));
@@ -90,7 +99,7 @@ $('#authGo').addEventListener('click',async ()=>{
     const hasProfile=await api('/profile').catch(()=>null);
     go(hasProfile?DEST_AFTER_AUTH:'onboarding');
     toast(tr('welcome'));
-  }catch(e){ $('#authErr').textContent=e.message; buzz(60); }
+  }catch(e){ $('#authErr').textContent=friendlyError(e); buzz(60); }
   finally{ busy=false; $('#authGo').textContent=tr(authMode==='login'?'sign_in':'sign_up'); }
 });
 $('#accountBtn').addEventListener('click',()=>{ if(USER&&confirm((USER.email||USER.phone||'')+' — '+tr('sign_out')+'?')){ TOKEN='';USER=null;localStorage.removeItem('mc_token');localStorage.removeItem('mc_user');showAuth(); } else if(!USER) showAuth(); });
