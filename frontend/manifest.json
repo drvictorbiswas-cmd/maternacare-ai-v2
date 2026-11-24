@@ -1,0 +1,15 @@
+{
+  "name": "Maternacare AI — Maternal & Child Health Companion",
+  "short_name": "Maternacare",
+  "description": "Offline maternal and child health education, safety triage and care reminders.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f7f6",
+  "theme_color": "#0d5c63",
+  "lang": "en",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
