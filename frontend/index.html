@@ -44,10 +44,11 @@
 
     <!-- Password mode -->
     <div class="auth-mode" id="authModePassword">
-      <div class="seg"><button class="seg-b active" id="segLogin" data-i18n="sign_in">Sign in</button><button class="seg-b" id="segSignup" data-i18n="sign_up">Sign up</button></div>
+      <div class="seg"><button class="seg-b" id="segLogin" data-i18n="sign_in">Sign in</button><button class="seg-b active" id="segSignup" data-i18n="sign_up">Sign up</button></div>
       <label class="f"><span data-i18n="email">Email or phone</span><input id="authId" placeholder="you@example.com or +919876543210" autocomplete="username"/></label>
       <label class="f"><span data-i18n="password">Password</span><input type="password" id="authPass" autocomplete="current-password"/></label>
       <button class="btn primary full ripple" id="authGo" data-i18n="sign_in">Sign in</button>
+      <p class="hint" id="authSwitchHint"></p>
       <p class="hint" id="authErr"></p>
     </div>
 

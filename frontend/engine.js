@@ -52,6 +52,10 @@ const STRINGS = {
     baby_hero_title:'Har Harkat Aapke Chhote Chamatkar Ki Tarah',height:'Lambai',symptoms:'Lakshan',mood:'Mood',activity:'Activity',recent_symptoms:'Haal ke Lakshan',logged:'darz',symptom:'Lakshan',mild:'Halka',moderate:'Madhya',strong:'Tez',prenatal_vitamins:'Prenatal Vitamins',kick_count:'Kick Count Session',
     sign_in_password:'Sign in with password',sign_in_otp:'Continue with OTP',password_min8:'Password must be at least 8 characters.',account_exists:'An account with this email or phone already exists. Please sign in.',wrong_credentials:'Wrong email/phone or password.',
     sign_in_password:'Password se sign in',sign_in_otp:'OTP se aage badhein',password_min8:'Password kam se kam 8 akshar ka hona chahiye.',account_exists:'Is email ya phone se account pehle se hai. Sign in karein.',wrong_credentials:'Email/phone ya password galat hai.',
+    tap_to_signup:'Tap here to create your account instead →',
+    tap_to_signup:'इसके बजाय account banane ke liye yahan tap karein →',
+    new_here:'New here?',
+    new_here:'Naye hain?',
     account:'Account',demo_note:'Configure Firebase in fbcfg.js for real accounts.',
   },
   hi: {
@@ -135,6 +139,8 @@ const STRINGS = {
     daily_tracker:'ডেইলি ট্র্যাকার',daily_tracker_desc:'মood, ঘুম, পানি, পদক্ষেপ রেকর্ড করে অগ্রগতি দেখুন',my_pregnancy:'আমার গর্ভ',day:'দিন',
     baby_hero_title:'প্রতিটি নড়াচড়া আপনার ছোট্ট অলৌকিকতা',height:'উচ্চতা',symptoms:'লক্ষণ',mood:'মood',activity:'কার্যকলাপ',recent_symptoms:'সাম্প্রতিক লক্ষণ',logged:'রেকর্ড',symptom:'লক্ষণ',mild:'হালকা',moderate:'মাঝারি',strong:'শক্ত',prenatal_vitamins:'প্রসব-পূর্ব ভিটামিন',kick_count:'কিক কাউন্ট সেশন',
     sign_in_password:'পাসওয়ার্ড দিয়ে সাইন ইন',sign_in_otp:'OTP দিয়ে এগিয়ে যান',password_min8:'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।',account_exists:'এই ইমেইল বা ফোনে অ্যাকাউন্ট আছে। সাইন ইন করুন।',wrong_credentials:'ইমেইল/ফোন বা পাসওয়ার্ড ভুল।',
+    tap_to_signup:'এর পরিবর্তে অ্যাকাউন্ট তৈরি করতে এখানে ট্যাপ করুন →',
+    new_here:'নতুন?',
     account:'অ্যাকাউন্ট',demo_note:'বাস্তব অ্যাকাউন্টের জন্য fbcfg.js-এ Firebase সেট করুন।',
   },
 };

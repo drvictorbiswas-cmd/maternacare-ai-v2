@@ -73,11 +73,30 @@ document.addEventListener('click',e=>{
 });
 
 /* Auth */
-let authMode='login';
+let authMode='signup';
 function showAuth(){ $('#authPage').classList.remove('hidden'); $$('.page').forEach(p=>{if(p.id!=='authPage')p.classList.add('hidden');}); $$('.tab').forEach(b=>b.classList.remove('active')); $('#authId').focus(); }
-function setAuthMode(m){ authMode=m; $('#segLogin').classList.toggle('active',m==='login'); $('#segSignup').classList.toggle('active',m==='signup'); $('#authGo').textContent=tr(m==='login'?'sign_in':'sign_up'); $('#authErr').textContent=''; }
+function setAuthMode(m){
+  authMode=m;
+  $('#segLogin').classList.toggle('active',m==='login');
+  $('#segSignup').classList.toggle('active',m==='signup');
+  $('#authGo').textContent=tr(m==='login'?'sign_in':'sign_up');
+  $('#authSwitchHint').innerHTML=m==='login'
+    ? esc(tr('new_here'))+' <button type="button" class="err-link" id="switchSignup">'+esc(tr('sign_up'))+' →</button>'
+    : esc(tr('have_account'))+' <button type="button" class="err-link" id="switchLogin">'+esc(tr('sign_in'))+' →</button>';
+  $('#switchSignup')?.addEventListener('click',()=>setAuthMode('signup'));
+  $('#switchLogin')?.addEventListener('click',()=>setAuthMode('login'));
+  const err=$('#authErr'); err.textContent=''; err.classList.remove('show');
+}
 $('#segLogin').addEventListener('click',()=>setAuthMode('login'));
 $('#segSignup').addEventListener('click',()=>setAuthMode('signup'));
+function showAuthError(msg, suggestSignup){
+  const err=$('#authErr'); err.textContent=msg; err.classList.add('show');
+  if(suggestSignup){
+    err.innerHTML=esc(msg)+' <button type="button" id="errSignup" class="err-link">'+esc(tr('tap_to_signup'))+'</button>';
+    $('#errSignup').addEventListener('click',()=>setAuthMode('signup'));
+  }
+  buzz(60);
+}
 function friendlyError(err){
   const m=err?.message||String(err);
   if(m.includes('at least 8')) return tr('password_min8');
@@ -88,9 +107,9 @@ function friendlyError(err){
 $('#authGo').addEventListener('click',async ()=>{
   if(busy) return;
   const ident=$('#authId').value.trim(), pass=$('#authPass').value;
-  if(!ident){ $('#authErr').textContent=tr('email_required'); return; }
-  if(pass.length<8){ $('#authErr').textContent=tr('password_min8'); return; }
-  busy=true; $('#authGo').textContent='…'; $('#authErr').textContent='';
+  if(!ident){ showAuthError(tr('email_required'),false); return; }
+  if(pass.length<8){ showAuthError(tr('password_min8'),false); return; }
+  busy=true; $('#authGo').textContent='…'; $('#authErr').classList.remove('show'); $('#authErr').textContent='';
   try{
     const data=await post(authMode==='login'?'/auth/login':'/auth/signup',{identifier:ident,password:pass});
     TOKEN=data.token; USER=data.user; localStorage.setItem('mc_token',TOKEN); localStorage.setItem('mc_user',JSON.stringify(USER));
@@ -99,7 +118,10 @@ $('#authGo').addEventListener('click',async ()=>{
     const hasProfile=await api('/profile').catch(()=>null);
     go(hasProfile?DEST_AFTER_AUTH:'onboarding');
     toast(tr('welcome'));
-  }catch(e){ $('#authErr').textContent=friendlyError(e); buzz(60); }
+  }catch(e){
+    const m=friendlyError(e);
+    showAuthError(m, (e.message||'').includes('Wrong credentials'));
+  }
   finally{ busy=false; $('#authGo').textContent=tr(authMode==='login'?'sign_in':'sign_up'); }
 });
 $('#accountBtn').addEventListener('click',()=>{ if(USER&&confirm((USER.email||USER.phone||'')+' — '+tr('sign_out')+'?')){ TOKEN='';USER=null;localStorage.removeItem('mc_token');localStorage.removeItem('mc_user');showAuth(); } else if(!USER) showAuth(); });
@@ -382,6 +404,7 @@ if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.se
 (async function init(){
   try{
     applyLang();
+    setAuthMode('signup'); // default to account creation
     showAuth(); // show login immediately — never block the UI on network calls
     if(TOKEN){
       try{
