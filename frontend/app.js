@@ -1,5 +1,6 @@
 /* Maternacare AI — animated, API-driven frontend. */
 window.addEventListener('error',e=>{ let d=document.getElementById('jserr'); if(!d){d=document.createElement('div');d.id='jserr';d.style.cssText='position:fixed;top:0;left:0;right:0;z-index:300;background:#b0454f;color:#fff;padding:10px;font:12px monospace';document.body.appendChild(d);} d.textContent='Error: '+(e.message||'unknown'); });
+window.addEventListener('unhandledrejection',e=>{ let d=document.getElementById('jserr'); if(!d){d=document.createElement('div');d.id='jserr';d.style.cssText='position:fixed;top:0;left:0;right:0;z-index:300;background:#b0454f;color:#fff;padding:10px;font:12px monospace';document.body.appendChild(d);} d.textContent='Async error: '+((e.reason&&e.reason.message)||e.reason||'unknown'); });
 let LANG = localStorage.getItem('mc_lang') || 'en';
 let TOKEN = localStorage.getItem('mc_token') || '';
 let USER = JSON.parse(localStorage.getItem('mc_user') || 'null');

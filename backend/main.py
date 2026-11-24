@@ -128,6 +128,17 @@ class VerifyIn(BaseModel):
     plan: str = 'monthly'
 
 
+class SendOTPIn(BaseModel):
+    phone: str
+    purpose: str = 'login'
+
+
+class VerifyOTPIn(BaseModel):
+    phone: str
+    code: str
+    purpose: str = 'login'
+
+
 class BabyIn(BaseModel):
     name: str
     date_of_birth: str
@@ -213,6 +224,53 @@ def login(body: AuthIn, request: Request):
         sec.audit(c, row['id'], 'login', 'user', row['id'])
         c.commit()
     return {'token': make_token(row['id']), 'user': {'id': row['id']}}
+
+
+# ----------------------------- OTP phone auth -----------------------------
+@app.post('/api/auth/send-otp')
+def send_otp(body: SendOTPIn, request: Request):
+    sec.otp_limiter.check(sec.client_key(request))
+    phone = body.phone.strip()
+    if not re.fullmatch(r'\+?\d{8,15}', phone):
+        raise HTTPException(400, 'Invalid phone number')
+    with db() as c:
+        sec.clean_expired_otps(c)
+        code = sec.generate_otp_code()
+        sec.store_otp(c, phone, code, body.purpose)
+        result = sec.send_otp_sms(phone, code, body.purpose)
+        sec.audit(c, None, 'otp_sent', 'user', detail=phone)
+        c.commit()
+    return {'sent': result['sent'], 'provider': result['provider'],
+            'detail': result['detail'], 'phone': phone}
+
+
+@app.post('/api/auth/verify-otp')
+def verify_otp(body: VerifyOTPIn, request: Request):
+    sec.otp_verify_limiter.check(sec.client_key(request))
+    phone = body.phone.strip()
+    if not re.fullmatch(r'\+?\d{8,15}', phone):
+        raise HTTPException(400, 'Invalid phone number')
+    with db() as c:
+        sec.clean_expired_otps(c)
+        if not sec.verify_otp(c, phone, code=body.code, purpose=body.purpose):
+            sec.audit(c, None, 'otp_verify_failed', 'user', detail=phone)
+            c.commit()
+            raise HTTPException(401, 'Invalid or expired OTP code')
+        # Find or create user by phone.
+        row = c.execute('SELECT * FROM users WHERE phone=?', (phone,)).fetchone()
+        if not row:
+            uid = str(uuid.uuid4())
+            c.execute('INSERT INTO users(id,phone,password,created_at) VALUES(?,?,?,?)',
+                      (uid, phone, pwd.hash(uuid.uuid4().hex), datetime.now().isoformat()))
+            c.execute('INSERT INTO consents(id,user_id,purpose,version,granted_at,text_hash) VALUES(?,?,?,?,?,?)',
+                      (uuid.uuid4().hex, uid, 'health_data_processing', '1.0',
+                       datetime.now().isoformat(), hashlib.sha256(b'consent-v1').hexdigest()))
+            sec.audit(c, uid, 'otp_signup', 'user', uid)
+        else:
+            uid = row['id']
+            sec.audit(c, uid, 'otp_login', 'user', uid)
+        c.commit()
+    return {'token': make_token(uid), 'user': {'id': uid, 'phone': phone}}
 
 
 @app.get('/api/me')

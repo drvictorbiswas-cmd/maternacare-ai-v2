@@ -1,132 +1,88 @@
 # DATABASE DESIGN & MIGRATION AUDIT — Maternacare AI
 
-**Audit date:** 2026-11-24 · **Repo:** `drvictorbiswas-cmd/maternacare-full`
-Audit-only; no schema changes were applied.
+**Audit date:** 2026-11-24 · **Repo:** `maternacare-full` (local)  
+**Status:** Audit only. No schema changes were applied. Awaiting your approval before development.
 
 ---
 
 ## 1. Current schema (as built)
 
-`init_db()` in `backend/main.py` creates six tables with `CREATE TABLE IF NOT EXISTS`:
+Schema is versioned via `PRAGMA user_version` with two idempotent migrations (`backend/migrations.py`, v1 + v2). `PRAGMA foreign_keys=ON` is enabled.
 
-| Table | Columns | Notes |
+| Table | Key columns | Notes |
 |---|---|---|
-| `users` | `id TEXT PK`, `email TEXT UNIQUE`, `phone TEXT UNIQUE`, `password TEXT`, `created_at TEXT` | Identifier type inferred by `@` in signup |
-| `profiles` | `user_id TEXT PK`, `data TEXT` (JSON blob), `updated_at TEXT` | All clinical/profile fields in one unstructured blob |
-| `tasks` | `id TEXT PK`, `user_id TEXT`, `type TEXT`, `title TEXT`, `due TEXT`, `week INT`, `note TEXT`, `custom INT`, `done INT`, `done_at TEXT` | No FK, no index |
-| `chat` | `id INTEGER PK AUTOINCREMENT`, `user_id TEXT`, `role TEXT`, `text TEXT`, `kind TEXT`, `created_at TEXT` | No FK, unbounded growth |
-| `subscriptions` | `user_id TEXT PK`, `plan TEXT`, `payment_id TEXT`, `activated_at TEXT`, `expires_at TEXT` | Plan is free-form string |
-| `feedback` | `id INTEGER PK`, `user_id TEXT`, `text TEXT`, `created_at TEXT` | No status/moderation |
+| `users` | `id PK`, `email UNIQUE`, `phone UNIQUE`, `password`, `created_at` | Identifier type inferred by `@` at signup |
+| `profiles` | `user_id PK`, `data` (JSON blob), `updated_at` | Mother's clinical profile in one unstructured blob |
+| `tasks` | `id PK`, `user_id`, `type`, `title`, `due`, `due_date`, `week`, `custom`, `done`, `done_at` | Index on `user_id`, `due_date` |
+| `chat` | `id PK AUTOINCREMENT`, `user_id`, `role`, `text`, `kind`, `created_at` | No FK; unbounded growth |
+| `subscriptions` | `user_id PK`, `plan`, `payment_id`, `activated_at`, `expires_at`, `status`, `current_period_end` | Plan validated against `plans` at verification time |
+| `feedback` | `id PK`, `user_id`, `text`, `created_at` | No status/moderation |
+| `mothers` | `id PK`, `user_id FK`, `date_of_birth`, `blood_group`, `height_cm`, `weight_kg`, `high_risk`, `risk_notes`, `created_at`, `updated_at` | Mother record |
+| `babies` | `id PK`, `mother_id FK`, `name`, `date_of_birth`, `sex`, `birth_weight_g`, `gestation_weeks`, `created_at`, `updated_at` | Baby record |
+| `family_links` | `id PK`, `user_id FK`, `baby_id FK`, `role`, `consent_id`, `created_at` | Family relationship link |
+| `pregnancies` | `id PK`, `mother_id FK`, `lmp`, `edd`, `parity`, `status`, `created_at`, `updated_at` | Pregnancy record |
+| `consents` | `id PK`, `user_id FK`, `purpose`, `version`, `granted_at`, `withdrawn_at`, `text_hash` | Consent records |
+| `care_plan_items` | `id PK`, `user_id FK`, `mother_id FK`, `baby_id FK`, `type`, `title`, `due_date`, `status`, `clinician_override`, `created_at`, `completed_at` | Appointment/investigation catalog |
+| `growth_measurements` | `id PK`, `baby_id FK`, `measured_at`, `weight_g`, `length_cm`, `head_circ_cm`, `source`, `recorded_by` | Growth tracking |
+| `immunization_records` | `id PK`, `baby_id FK`, `vaccine_code`, `due_date`, `given_date`, `status`, `batch_no`, `facility` | Immunization records |
+| `feeding_sessions` | `id PK`, `baby_id FK`, `started_at`, `ended_at`, `type`, `notes` | Feeding logging |
+| `plans` | `code PK`, `price_paise`, `currency`, `duration_days`, `active` | Price catalog (monthly ₹990/30d, yearly ₹7,990/365d) |
+| `payment_events` | `id PK`, `user_id FK`, `order_id UNIQUE`, `payment_id`, `signature_verified`, `event_type`, `payload_hash`, `created_at` | Payment audit |
+| `audit_log` | `id PK`, `actor_id`, `action`, `entity_type`, `entity_id`, `detail`, `created_at` | Audit trail |
+| `refresh_tokens` | `token_hash PK`, `user_id FK`, `expires_at`, `revoked`, `created_at` | Unused by endpoints yet |
 
-`PRAGMA foreign_keys` is **not** enabled. No indexes exist beyond primary keys and UNIQUE constraints.
-
-### Critical data-exposure finding
-`backend/data/maternacare.db` is **tracked by git** in a **public** repository. Inspection found: 4 users (including an email and a 10-digit phone number), 1 profile, 9 tasks, 2 chat messages, 2 subscriptions. This must be removed from the working tree and from git history; treat every value in it as leaked. No code change was made during this audit.
-
----
-
-## 2. What is missing for the product direction
-
-The stated direction requires mother and baby to be **separate records linked through a family relationship**. The current schema cannot represent this:
-
-| Required concept | Current support | Needed |
-|---|---|---|
-| Mother record | Single JSON blob in `profiles` | Structured `mothers` table |
-| Baby record | ❌ | `babies` table with DOB, name, sex, birth weight, mother_id |
-| Family relationship | ❌ | `family_members` / `relationships` table with role + consent |
-| Baby-specific tasks/immunizations | ❌ | `baby_id` on tasks; immunization records table |
-| Growth measurements | ❌ | `growth_measurements` (date, weight, length, head circumference, source) |
-| Milestone tracking | ❌ | `milestone_observations` |
-| Breastfeeding sessions | ❌ | `feeding_sessions` |
-| Clinical risk flags | ❌ | `risk_assessments` with reviewer + date |
-| Consent records | single boolean in profile | `consents` (purpose, version, timestamp, withdrawal) |
-| Audit trail | ❌ | `audit_log` (actor, action, entity, timestamp) |
-| Appointment/investigation catalog | ⚠️ generated tasks only | `care_plan_items` with status and clinician override |
-| Subscription/payment events | one row per user | `payment_events` with order id, signature status, webhook payload |
+Indexes: `idx_tasks_user`, `idx_tasks_due`, `idx_babies_mother`, `idx_care_user`, `idx_growth_baby`, `idx_imm_baby`, `idx_audit_actor`.
 
 ---
 
-## 3. Proposed target schema (for review — not implemented)
+## 2. Mother/baby separation & family relationship (product requirement met in schema)
 
-```
-users(id PK, email UNIQUE, phone UNIQUE, password_hash, created_at, last_login_at,
-      status, failed_attempts, locked_until)
+The stated direction requires mother and baby to be **separate records linked through a family relationship**. The schema now supports this:
 
-mothers(id PK, user_id FK→users, date_of_birth, blood_group, height_cm, weight_kg,
-        high_risk, risk_notes, created_at, updated_at)
-
-babies(id PK, mother_id FK→mothers, name, date_of_birth, sex, birth_weight_g,
-       gestation_at_birth_weeks, created_at, updated_at)
-
-family_links(id PK, user_id FK→users, baby_id FK→babies, role, consent_id, created_at)
-
-pregnancies(id PK, mother_id FK→mothers, lmp, edd, parity, status, created_at, updated_at)
-
-consents(id PK, user_id FK→users, purpose, version, granted_at, withdrawn_at, text_hash)
-
-care_plan_items(id PK, user_id FK, baby_id FK NULL, mother_id FK NULL, type, title,
-                due_date, status, clinician_override, created_at, completed_at)
-
-growth_measurements(id PK, baby_id FK, measured_at, weight_g, length_cm, head_circ_cm,
-                    source, recorded_by)
-
-immunization_records(id PK, baby_id FK, vaccine_code, due_date, given_date, status,
-                     batch_no, facility)
-
-feeding_sessions(id PK, baby_id FK, started_at, ended_at, type, notes)
-
-chat_messages(id PK, user_id FK, baby_id FK NULL, role, text, kind, created_at)
-
-subscriptions(id PK, user_id FK, plan_id FK, status, current_period_end, cancelled_at)
-
-payment_events(id PK, user_id FK, order_id UNIQUE, payment_id, signature_verified,
-               event_type, payload_hash, created_at)
-
-audit_log(id PK, actor_id, action, entity_type, entity_id, created_at, ip_hash)
-
-plans(id PK, code UNIQUE, price_paise, currency, duration_days, active)
-```
-
-**Key design rules:**
-- Every PHI table carries `user_id`/`mother_id`/`baby_id` for row-level authorization; queries must filter by the authenticated user's family scope.
-- Use foreign keys with `PRAGMA foreign_keys=ON` and `ON DELETE` behaviors defined.
-- Store dates as ISO-8601 strings consistently; store money in paise integers.
-- Never store raw Razorpay webhook payloads; store a hash and only needed fields.
-- Do not put medical values in JSON blobs — they need validation, querying, and audit.
+| Required concept | Schema support |
+|---|---|
+| Mother record | ✅ `mothers` table |
+| Baby record | ✅ `babies` table (DOB, name, sex, birth weight, gestation weeks, mother_id) |
+| Family relationship | ✅ `family_links` (role + consent_id) |
+| Baby-specific tasks/immunizations | ✅ `baby_id` on growth/immunization; care_plan_items allows `baby_id` NULL |
+| Growth measurements | ✅ `growth_measurements` |
+| Feeding sessions | ✅ `feeding_sessions` |
+| Consent records | ✅ `consents` (purpose/version/timestamp/withdrawal) |
+| Audit trail | ✅ `audit_log` |
+| Subscription/payment events | ✅ `payment_events` |
 
 ---
 
-## 4. Migration requirements
+## 3. Migration requirements (remaining work)
 
-**Current state:** none. `CREATE TABLE IF NOT EXISTS` cannot evolve schema.
+Current state: migrations v1 (baseline, all tables) + v2 (additive columns: `due_date`, `subscriptions.status/current_period_end`) exist and run on startup.
 
-Required before any further development:
-1. Introduce a migration mechanism (Alembic is standard with SQLAlchemy; a minimal in-house runner with `PRAGMA user_version` and ordered SQL files is acceptable for this size).
-2. Version every schema change; migrations must be idempotent and tested against a copy of production-shaped data.
+Required before further development:
+1. Test the migration path on a production-shaped copy of the database; document a PHI-scrubbing step.
+2. Add a startup check that fails closed if the DB schema version is behind expected.
 3. Migration policy: additive columns first (nullable), backfill, then constraints — never destructive in a single deploy.
-4. Add a startup check that fails closed if the DB schema version is behind.
-5. Provide a tested migration path from the current 6-table schema (including the committed DB's shape) to the target schema, with a documented PHI-scrubbing step.
-6. **Operational requirement:** attach a persistent volume/disk in Render (or use managed Postgres) — the current `render.yaml` has no disk, so any SQLite data is lost on redeploy.
+4. Provide a tested migration path from the legacy 6-table schema to the current normalized schema.
+5. **Operational:** attach a persistent volume/disk in Render (or use managed Postgres) — without this, SQLite data is lost on redeploy.
 
 ---
 
-## 5. Data quality & validation issues
+## 4. Data quality & validation issues
 
-- `profiles.data` JSON has no schema; `stage` normalization (`pregnant` → `pregnancy`) happens in application code and is not enforced at the DB layer.
-- `compute_edd()` accepts arbitrary `weeks` (negative, >45), future LMP dates, and unparseable dates (raises `ValueError` → unhandled 500). Needs domain validation: LMP not in future, weeks 0–45, EDD reasonable relative to LMP.
-- `tasks.due` is an unvalidated string; comparisons with `date.today().isoformat()` rely on ISO format.
-- `subscriptions.plan` is any string; must reference a `plans` table.
+- `profiles.data` JSON has no DB-level schema; stage normalization (`pregnant` → `pregnancy`) happens in application code, not enforced at the DB layer.
+- `compute_edd()` accepts negative/`>45` weeks and future LMP dates; unparseable dates raise `ValueError` → 500. Needs domain validation: LMP not in future, weeks 0–45, EDD reasonable relative to LMP.
+- `tasks.due` is an unvalidated string; comparisons rely on ISO format.
+- `subscriptions.plan` is any string; must reference `plans.code` at the DB or strict application layer.
 - No uniqueness constraint preventing duplicate generated ANC tasks beyond the application-level `COUNT(*)==0` check (race-prone).
 
 ---
 
-## 6. Retention, deletion & portability (DPDP Act)
+## 5. Retention, deletion & portability (DPDP Act)
 
-- No data-retention policy or deletion endpoint. Right-to-erasure is not implemented.
-- No data export (user cannot retrieve their records).
-- No consent withdrawal affecting processing.
-- Chat messages and feedback are retained indefinitely.
-- Backups/encryption at rest are unspecified.
+- Data-retention policy not defined.
+- `/api/export` (right to access/portability) and `/api/account` (right to erasure) endpoints exist.
+- Erasure anonymizes `payment_events` for audit but deletes user data; chat/feedback otherwise retained indefinitely.
+- No consent-withdrawal effect on processing enforced at the API layer.
+- Backups/encryption at rest unspecified — managed Postgres recommended.
 
 ---
 

@@ -108,6 +108,16 @@ MIGRATIONS = [
     UPDATE subscriptions SET status = 'active', current_period_end = expires_at WHERE status IS NULL;
     CREATE INDEX IF NOT EXISTS idx_tasks_due ON tasks(due_date);
     """,
+    # v3 — OTP phone verification codes (time-bound, single-use)
+    """
+    CREATE TABLE IF NOT EXISTS otp_codes(
+        id TEXT PRIMARY KEY, phone TEXT NOT NULL, code TEXT NOT NULL,
+        purpose TEXT NOT NULL DEFAULT 'login', attempts INTEGER DEFAULT 0,
+        expires_at TEXT NOT NULL, used_at TEXT, created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_otp_phone ON otp_codes(phone);
+    CREATE INDEX IF NOT EXISTS idx_otp_expires ON otp_codes(expires_at);
+    """,
 ]
 
 
