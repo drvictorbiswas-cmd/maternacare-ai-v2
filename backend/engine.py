@@ -39,20 +39,20 @@ EDUCATION = {
 }
 
 DANGER = [
-    {'id':'bleed','m':['bleeding','blood','खून','খ़ून','রক্ত','spotting'],'s':'pregnancy','u':'emergency',
+    {'id':'bleed','m':['bleeding','blood','missed period','মিস্ড পিরিযড','मिस्ड पीरियড','खून','খ़ून','রক্ত','spotting','abdominal pain','stomach pain','pet mein dard','পেটে ব্যথা','পেটের ব্যথা','পেটে দর্দ','abdomen','pet mein','পেটে ব্যথা র�'],'s':'pregnancy','u':'emergency',
      'r':{'en':'Bleeding in pregnancy can mean miscarriage, ectopic pregnancy or placental problems.','hi':'Pregnancy mein bleeding gambhir samasya ka sanket hai.','bn':'গর্ভে রক্তপাত গুরুতর সমস্যার লক্ষণ।'},
      'a':{'en':'Go to an emergency department now. Do not wait.','hi':'Abhi emergency department jayein.','bn':'এখনই জরুরি বিভাগে যান।'},
      'steps':['Sit or lie down','Note amount & timing','Take pregnancy records','Do not self-medicate']},
     {'id':'headache','m':['severe headache','blurred vision','dhundhla','धुँधला','ঝাপসা','sir dard','মাথাব্যথা'],'s':'pregnancy,postpartum','u':'emergency',
      'r':{'en':'Severe headache with blurred vision can be pre-eclampsia.','hi':'Tez sir dard + dhundhla pre-eclampsia ka sanket hai.','bn':'তীব্র মাথাব্যথা ও ঝাপসা দৃষ্টি প্রি-ইক্ল্যাম্পসিয়া।'},
      'a':{'en':'Seek emergency assessment now. Do not drive if vision is blurred.','hi':'Abhi emergency jaanch.','bn':'এখনই জরুরি পরীক্ষা।'},'steps':['Sit down','Check BP if possible','Note symptoms','Go to emergency care']},
-    {'id':'convulsion','m':['convulsion','seizure','jhatka','झटके','খিঁচুনি'],'s':'pregnancy,postpartum,newborn','u':'emergency',
+    {'id':'convulsion','m':['convulsion','seizure','jhatka','झटके','খিঁচুনি','fits','fit','epilepsy'],'s':'pregnancy,postpartum,newborn','u':'emergency',
      'r':{'en':'Convulsions can indicate eclampsia or another serious condition.','hi':'Jhatke gambhir samasya ka sanket hain.','bn':'খিঁচুনি গুরুতর সমস্যার লক্ষণ।'},
      'a':{'en':'Call an ambulance NOW. Nothing in mouth. Place on side.','hi':'Abhi ambulance call. Side par litayein.','bn':'এখনই অ্যাম্বুলেন্স কল। পাশে শুইয়ে দিন।'},'steps':['Call emergency','Do not restrain','Turn on side','Time the seizure']},
-    {'id':'breath','m':['breath','breathing','saans','साँस','শ্বাস','chest pain'],'s':'pregnancy,postpartum,newborn','u':'emergency',
+    {'id':'breath','m':['breath','breathing','saans','साँस','শ্বাস','chest pain','blue','নীল','नीला','cyanosis','লিপস ব্লু','নীল ঠোঁট'],'s':'pregnancy,postpartum,newborn','u':'emergency',
      'r':{'en':'Difficulty breathing or chest pain can be life-threatening.','hi':'Saans lene mein dikkat jaanleva hai.','bn':'শ্বাসকষ্ট বা বুকে ব্যথা জীবন-হুমকি।'},
      'a':{'en':'Call emergency services now. Sit upright.','hi':'Abhi emergency call. Seedhe baithein.','bn':'এখনই জরুরি কল। সোজা বসুন।'},'steps':['Call emergency','Sit upright','Loosen clothing','Do not leave alone']},
-    {'id':'movement','m':['reduced movement','less movement','no movement','baby not moving','hulchul','নড়াচড়া','कम हलचल'],'s':'pregnancy','u':'urgent',
+    {'id':'movement','m':['reduced movement','less movement','no movement','baby not moving','hulchul','নড়াচড়া','कम हलचल','not moving','not feel','not feeling','kick count','বাচ্চা হলচল','শিশু নড়াচড়ा','शिशु हलचल'],'s':'pregnancy','u':'urgent',
      'r':{'en':'Reduced fetal movements can mean the baby is unwell.','hi':'Baby ki hulchul kam hona bimaari ka sanket hai.','bn':'শিশুর নড়াচড়া কমা অসুস্থতার লক্ষণ।'},
      'a':{'en':'Contact your maternity unit today.','hi':'Aaj hi maternity unit se sampark karein.','bn':'আজই ম্যাটার্নিটি ইউনিটে যোগাযোগ করুন।'},'steps':['Note last movements','Drink & lie on left','Count 2 hours','Call with result']},
     {'id':'fluid','m':['water broke','fluid leaking','leaking','paani','पानी','জল'],'s':'pregnancy','u':'urgent',
@@ -113,16 +113,64 @@ def education_for(stage, days=None):
     if stage == 'baby': return EDUCATION['newborn'] + EDUCATION['child']
     return EDUCATION['planning']
 
+# Negation words that suppress a danger keyword when nearby (CL-07: no false alarms).
+NEGATION = ['no ', 'not ', 'dont', "don't", 'do not', 'never', 'without', 'none', 'denies', 'denied',
+            'nahin', 'नहीं', 'নেই', 'না', 'no bleeding', 'not bleeding']
+
+# Hard emergency override phrases — always emergency regardless of keyword match (CL-06).
+EMERGENCY_OVERRIDE = ['emergency', 'ambulance', 'dying', 'unconscious', 'collapse', 'collapsed',
+                      'help me', 'মদদ', 'সাহায্য', 'मदद', 'turant', 'अभी', 'এখন']
+
+
+def _has_negation(s, keyword):
+    """Return True if a negation word appears within ~25 chars before the keyword (CL-07)."""
+    idx = s.find(keyword)
+    if idx < 0:
+        return False
+    before = s[max(0, idx - 25):idx]
+    return any(n in before for n in NEGATION)
+
+
 def triage(text, stage):
-    if not text or not text.strip(): return None
+    if not text or not text.strip():
+        return None
     s = text.lower()
     stages = 'pregnancy' if stage == 'pregnancy' else ('postpartum,newborn' if stage == 'postpartum' else 'newborn,child')
+
+    # Hard emergency override (CL-06)
+    if any(k in s for k in EMERGENCY_OVERRIDE):
+        return {
+            'urgency': 'emergency', 'id': 'override_emergency',
+            'reason': {'en': 'You mentioned an emergency. Treat this as urgent until assessed by a clinician.',
+                       'hi': 'आपने आपातकालीन स्थिति बताई है. डॉक्टर से जांच तक इसे आपातकालीन मानें.',
+                       'bn': 'আপনি জরুরি অবস্থার কথা বলেছেন. চিকিৎসকের পরীক্ষা পর্যন্ত এটি জরুরি মনে করুন।'},
+            'action': {'en': 'Go to an emergency department now. Do not wait.',
+                       'hi': 'अब ही आपातकालीन विभाग जाएं. इंतजार न करें.',
+                       'bn': 'এখনই জরুরি বিভাগে যান। অপেক্ষা করবেন না।'},
+            'steps': ['Go to emergency now', 'Call 102 for ambulance in India', 'Do not drive yourself'],
+            'all': [],
+        }
+
     rank = {'emergency': 0, 'urgent': 1}
-    found = [d for d in DANGER if any(x in stages for x in d['s'].split(',')) and any(k.lower() in s for k in d['m'])]
-    if not found: return None
+    found = []
+    for d in DANGER:
+        if not any(x in stages for x in d['s'].split(',')):
+            continue
+        # Keyword match with negation suppression (CL-07)
+        if not any(k.lower() in s and not _has_negation(s, k.lower()) for k in d['m']):
+            continue
+        found.append(d)
+
+    if not found:
+        return None
+
     found.sort(key=lambda d: rank.get(d['u'], 2))
-    d = found[0]
-    return {'urgency': d['u'], 'id': d['id'], 'reason': d['r'], 'action': d['a'], 'steps': d['steps']}
+    primary = found[0]
+    return {
+        'urgency': primary['u'], 'id': primary['id'],
+        'reason': primary['r'], 'action': primary['a'], 'steps': primary['steps'],
+        'all': [{'id': d['id'], 'urgency': d['u'], 'reason': d['r'], 'action': d['a'], 'steps': d['steps']} for d in found],
+    }
 
 def anc_schedule(edd):
     if not edd: return []
@@ -143,19 +191,39 @@ def chat_reply(text, stage, tasks, lang):
     s = (text or '').lower()
     a = triage(text, stage)
     if a:
+        if a.get('all') and len(a['all']) > 1:
+            # Multiple red flags — surface all of them (CL-08)
+            parts = []
+            for d in a['all']:
+                r = d['reason'].get(lang, d['reason']['en'])
+                ac = d['action'].get(lang, d['action']['en'])
+                parts.append(f"⚠️ {r} {ac} Steps: " + ' • '.join(d['steps']))
+            label = '🚨 EMERGENCY — ' if a['urgency'] == 'emergency' else '⚠️ URGENT — '
+            return {'kind': 'danger', 'text': label + ' | '.join(parts)}
         label = '🚨 EMERGENCY — ' if a['urgency'] == 'emergency' else '⚠️ URGENT — '
         r = a['reason'].get(lang, a['reason']['en']); ac = a['action'].get(lang, a['action']['en'])
         return {'kind': 'danger', 'text': f"{label}{r} {ac} Steps: " + ' • '.join(a['steps'])}
-    tw = ['saffron','papaya','ghee','honey','cord','bind','kadha','tradition','parampara','जाफरान','পেঁপে']
-    if any(w in s for w in tw): return {'kind':'tradition','text':'See the Traditions tab for belief, evidence, verdict and safer alternatives.'}
-    dw = ['due','next','appointment','visit','test','vaccine','calendar','reminder','टिका','ভ্যাকসিন']
+
+    tw = ['saffron','papaya','ghee','honey','cord','bind','kadha','tradition','parampara','जाफরান','পেঁপে']
+    if any(w in s for w in tw):
+        return {'kind':'tradition','text':'See the Traditions tab for belief, evidence, verdict and safer alternatives.'}
+
+    dw = ['due','next','appointment','visit','test','vaccine','calendar','reminder','টিকা','ভ্যাকসিন']
     if any(w in s for w in dw):
         open_t = sorted([t for t in tasks if not t.get('done')], key=lambda x: x['due'])[:3]
-        return {'kind':'schedule','text':'Coming up: ' + '; '.join(f"{t['title']} ({t['due']})" for t in open_t) if open_t else 'No open reminders. See Calendar.'}
+        if open_t:
+            return {'kind':'schedule','text':'Coming up: ' + '; '.join(f"{t['title']} ({t['due']})" for t in open_t)}
+        # CL-04: no tasks — suggest general ANC schedule
+        return {'kind':'schedule','text':'No open reminders. You can add tasks in Calendar, or ask about your next antenatal visit.'}
+
     ew = ['eat','food','diet','exercise','breastfeed','sleep','week','baby','normal']
     if any(w in s for w in ew):
         items = education_for(stage)
         if items:
-            it = items[0]
-            return {'kind':'education','text': f"{it['title'].get(lang, it['title']['en'])} — {it['body'].get(lang, it['body']['en'])}"}
-    return {'kind':'fallback','text':"I don't have a verified answer. Ask your doctor. If urgent, use the Safety page."}
+            # CL-05: return up to 2 education items instead of just 1
+            parts = []
+            for it in items[:2]:
+                parts.append(f"{it['title'].get(lang, it['title']['en'])} — {it['body'].get(lang, it['body']['en'])}")
+            return {'kind':'education','text': ' '.join(parts)}
+
+    return {'kind':'fallback','text':"I don't have a verified answer for that. Ask your doctor or nurse. This is educational information, not medical advice. If urgent, use the Safety page now."}
