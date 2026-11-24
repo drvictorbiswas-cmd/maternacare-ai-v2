@@ -103,15 +103,19 @@
   </div>
 </section>
 
-<!-- HOME -->
+<!-- HOME — pink pregnancy dashboard (reference style) -->
 <section id="home" class="page hidden">
-  <div class="hero card">
-    <div class="hero-top"><div><p class="eyebrow" id="hStage"></p><h1 id="hWeek"></h1><p class="muted" id="hTri"></p></div>
-      <div class="ring" id="hRing"><span id="hPct">0%</span></div></div>
-    <div class="hero-meta"><div><small data-i18n="edd_label">EDD</small><strong id="hEdd"></strong></div><div><small data-i18n="next_visit">Next visit</small><strong id="hNext"></strong></div></div>
+  <div class="home-hero">
+    <div class="hh-top"><span class="hh-chip"><span class="dot"></span><span id="hChip">My Pregnancy</span></span><button class="hh-bell" data-tab="calendar" aria-label="Reminders">🔔</button></div>
+    <div class="hh-week"><div><b id="hWeek">Week 22</b><div class="hh-sub" id="hTri"></div></div><div class="hh-ring" id="hRing"><span id="hPct">0%</span></div></div>
   </div>
-  <button class="sub-chip" id="subChip" data-tab="sub"><span>✧</span><span id="subChipText"></span></button>
-  <button class="emer-btn ripple" data-tab="safety"><span>🚨</span><span data-i18n="open_emergency">Emergency help</span><span>→</span></button>
+  <div class="daily-tracker">
+    <h3 data-i18n="daily_tracker">Daily Tracker</h3>
+    <p data-i18n="daily_tracker_desc">Log your Mood, Sleep, Water, Steps And See How You're Progressing</p>
+    <div class="big-ring" id="dRing"><span class="ring-label" id="dLabel">Day 85</span></div>
+    <div class="home-meta"><div><small data-i18n="edd_label">EDD</small><strong id="hEdd"></strong></div><div><small data-i18n="next_visit">Next visit</small><strong id="hNext"></strong></div></div>
+  </div>
+  <button class="pink-emer ripple" data-tab="safety"><span>🚨</span><span data-i18n="open_emergency">Emergency help</span><span>→</span></button>
   <div class="card"><h2 data-i18n="quick_check">Quick safety check</h2><p class="muted" data-i18n="quick_check_desc"></p>
     <form class="inline" id="quickF"><input id="quickIn" data-ph="symptom"/><button class="btn primary ripple" data-i18n="check_now">Check</button></form><div id="quickOut"></div></div>
   <div class="card"><div class="ch"><h2 data-i18n="education">For your stage</h2><button class="link" data-tab="learn" data-i18n="nav_learn">Learn</button></div><div id="homeEdu"></div></div>
@@ -125,35 +129,57 @@
 <section id="calendar" class="page hidden"><div class="card"><h1 data-i18n="calendar_title"></h1><p class="muted" data-i18n="calendar_desc"></p>
   <div class="add"><input id="newTask" data-ph="task_name"/><input type="date" id="newDue"/><button class="btn primary ripple" id="addBtn" data-i18n="add"></button></div><div id="taskList" class="stagger"></div></div></section>
 
-<!-- BABY: growth / feeding / immunization -->
+<!-- BABY GROWTH — reference style -->
 <section id="baby" class="page hidden">
+  <div class="baby-hero">
+    <p class="eyebrow" id="babyWeekLabel">Week 22</p>
+    <h1 data-i18n="baby_hero_title">Every Movement as Your Little Miracle</h1>
+    <div class="baby-art">👶</div>
+    <div class="baby-metric"><small data-i18n="height">Height</small><strong id="babyHeight">19 cm</strong></div>
+  </div>
   <div class="card">
     <div class="ch"><h1 data-i18n="baby_title">My Baby</h1><button class="btn ghost" id="addBabyBtn" data-i18n="add_baby">+ Add baby</button></div>
     <div id="babyList" class="stagger"></div>
   </div>
   <div id="babyDetail" class="hidden">
     <div class="card">
-      <h2 data-i18n="growth">Growth monitoring</h2>
-      <p class="muted" data-i18n="growth_desc">Record weight, length and head circumference. Track over time.</p>
-      <div class="add">
-        <input type="date" id="gDate"/>
-        <input type="number" id="gWeight" data-ph="weight_g" step="1"/>
-        <input type="number" id="gLength" data-ph="length_cm" step="0.1"/>
-        <input type="number" id="gHead" data-ph="head_circ_cm" step="0.1"/>
-        <button class="btn primary ripple" id="addGrowth" data-i18n="add">Add</button>
+      <div class="seg-tabs" id="babyTabs">
+        <button class="active" data-bt="symptoms" data-i18n="symptoms">Symptoms</button>
+        <button data-bt="growth" data-i18n="growth">Growth</button>
+        <button data-bt="activity" data-i18n="activity">Activity</button>
       </div>
-      <div id="growthList"></div>
-    </div>
-    <div class="card">
-      <h2 data-i18n="feeding">Feeding log</h2>
-      <p class="muted" data-i18n="feeding_desc">Log a feeding session. Supports breastfeeding and more.</p>
-      <div class="add">
-        <select id="fType"><option value="breast" data-i18n="feed_breast">Breast</option><option value="bottle" data-i18n="feed_bottle">Bottle</option><option value="mixed" data-i18n="feed_mixed">Mixed</option><option value="solids" data-i18n="feed_solids">Solids</option></select>
-        <input type="date" id="fDate"/>
-        <input id="fNote" data-ph="notes"/>
-        <button class="btn primary ripple" id="addFeeding" data-i18n="add">Add</button>
+      <div id="bt-symptoms">
+        <h2 data-i18n="recent_symptoms">Recent Symptoms</h2>
+        <div class="symptom-ring"><span id="symCount">3 logged</span></div>
+        <div id="symptomMini"></div>
       </div>
-      <div id="feedingList"></div>
+      <div id="bt-growth" class="hidden">
+        <h2 data-i18n="growth">Growth monitoring</h2>
+        <p class="muted" data-i18n="growth_desc">Record weight, length and head circumference. Track over time.</p>
+        <div class="add">
+          <input type="date" id="gDate"/>
+          <input type="number" id="gWeight" data-ph="weight_g" step="1"/>
+          <input type="number" id="gLength" data-ph="length_cm" step="0.1"/>
+          <input type="number" id="gHead" data-ph="head_circ_cm" step="0.1"/>
+          <button class="btn primary ripple" id="addGrowth" data-i18n="add">Add</button>
+        </div>
+        <div id="growthList"></div>
+      </div>
+      <div id="bt-activity" class="hidden">
+        <div class="mini-cards">
+          <div class="mini-card" data-tab="chat"><span class="ic">💊</span><b data-i18n="prenatal_vitamins">Prenatal Vitamins</b><small>8:00 AM</small></div>
+          <div class="mini-card" data-tab="chat"><span class="ic">📈</span><b data-i18n="kick_count">Kick Count Session</b><small>8:30 PM</small></div>
+        </div>
+        <h2 style="margin-top:16px" data-i18n="feeding">Feeding log</h2>
+        <p class="muted" data-i18n="feeding_desc">Log a feeding session. Supports breastfeeding and more.</p>
+        <div class="add">
+          <select id="fType"><option value="breast" data-i18n="feed_breast">Breast</option><option value="bottle" data-i18n="feed_bottle">Bottle</option><option value="mixed" data-i18n="feed_mixed">Mixed</option><option value="solids" data-i18n="feed_solids">Solids</option></select>
+          <input type="date" id="fDate"/>
+          <input id="fNote" data-ph="notes"/>
+          <button class="btn primary ripple" id="addFeeding" data-i18n="add">Add</button>
+        </div>
+        <div id="feedingList"></div>
+      </div>
     </div>
     <div class="card">
       <h2 data-i18n="immunizations">Immunizations</h2>
@@ -171,12 +197,25 @@
   <label class="f"><span data-i18n="birth_weight">Birth weight (g)</span><input type="number" id="bWeight"/></label>
   <button class="btn primary full ripple" id="saveBaby" data-i18n="add_baby">Add baby</button>
 </div></div>
-<section id="chat" class="page hidden"><div class="card chat-card"><h1 data-i18n="chat_title"></h1><p class="muted" data-i18n="chat_desc"></p>
-  <div class="log" id="log"></div><form class="inline" id="chatF"><input id="chatIn" data-ph="chat_placeholder" autocomplete="off"/><button class="btn primary ripple" data-i18n="send"></button></form></div></section>
+<section id="chat" class="page hidden"><div class="card chat-card">
+  <div class="chat-head"><button class="chat-back" data-tab="home" aria-label="Back">←</button><span class="doctor-avatar">👩‍⚕️</span><div><h1 data-i18n="chat_title"></h1><p class="muted" data-i18n="chat_desc"></p></div></div>
+  <div class="chat-quick"><button data-quick="symptom">🩺 Symptoms</button><button data-quick="food">🥗 Diet</button><button data-quick="vaccine">💉 Vaccines</button><button data-quick="tradition">🌿 Traditions</button></div>
+  <div class="log" id="log"></div>
+  <form class="chat-input-row" id="chatF"><input id="chatIn" data-ph="chat_placeholder" autocomplete="off"/><button class="chat-send" type="submit" aria-label="Send">➤</button></form>
+</div></section>
 <section id="sub" class="page hidden"><div class="card"><h1 data-i18n="manage_sub">Subscription</h1><div id="subStatus"></div>
   <h2 data-i18n="choose_plan">Choose a plan</h2><div class="plans" id="subPlans"></div><p class="hint" data-i18n="payment_note"></p>
   <button class="btn ghost full ripple" id="signOutBtn" data-i18n="sign_out">Sign out</button></div></section>
 </main>
+
+<!-- Bottom pill navigation (reference style) -->
+<nav class="bottom-nav" id="bottomNav">
+  <button data-tab="home" class="active" aria-label="Home">⌂</button>
+  <button data-tab="baby" aria-label="Baby">👶</button>
+  <button data-tab="chat" aria-label="Ask">👩‍⚕️</button>
+  <button data-tab="calendar" aria-label="Calendar">▦</button>
+  <button data-tab="safety" aria-label="Safety">🛡</button>
+</nav>
 
 <footer class="footer"><p id="foot"></p></footer>
 <div class="toast" id="toast"></div>

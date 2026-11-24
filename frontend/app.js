@@ -45,6 +45,7 @@ function go(tab, skipAuth=false){
   $$('.page').forEach(p=>p.classList.add('hidden'));
   const el=$('#'+tab); if(el){ el.classList.remove('hidden'); el.style.animation='none'; void el.offsetWidth; el.style.animation=''; }
   $$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  $$('#bottomNav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   window.scrollTo({top:0,behavior:'smooth'}); buzz(8);
   if(tab==='chat') renderChat();
   if(tab==='sub') renderSub();
@@ -259,8 +260,26 @@ function renderBabyDetail(){
   detail.classList.remove('hidden');
   $('#gDate').value=new Date().toISOString().slice(0,10);
   $('#fDate').value=new Date().toISOString().slice(0,10);
+  const baby=BABIES.find(b=>b.id===BABY_ID);
+  $('#babyWeekLabel').textContent=baby?.date_of_birth?tr('baby_age'):'';
+  $('#babyHeight').textContent='19 cm';
   loadGrowth(); loadFeeding(); loadImm();
+  renderSymptoms();
 }
+function renderSymptoms(){
+  const colors=['var(--pink)','var(--lilac)','var(--mint)'];
+  const names=[tr('symptom'),tr('mood'),tr('activity')];
+  $('#symCount').textContent=names.length+' '+tr('logged');
+  $('#symptomMini').innerHTML=names.map((n,i)=>`<div class="symptom-row"><span class="bar" style="background:${colors[i%3]}"></span><div><b>${esc(n)}</b><small>${i===0?tr('mild'):i===1?tr('moderate'):tr('strong')}</small></div></div>`).join('');
+}
+$$('#babyTabs button').forEach(b=>b.addEventListener('click',()=>{
+  $$('#babyTabs button').forEach(x=>x.classList.toggle('active',x===b));
+  ['symptoms','growth','activity'].forEach(k=>$('#bt-'+k).classList.toggle('hidden',k!==b.dataset.bt));
+}));
+$$('[data-quick]').forEach(b=>b.addEventListener('click',()=>{
+  const map={symptom:'I have a symptom',food:'What should I eat?',vaccine:'When are the vaccines due?',tradition:'Tell me about a tradition'};
+  $('#chatIn').value=map[b.dataset.quick]||''; $('#chatIn').focus();
+}));
 async function loadGrowth(){
   GROWTH=await api('/growth/'+BABY_ID).catch(()=>[]);
   $('#growthList').innerHTML=GROWTH.length?GROWTH.map(g=>`<div class="task"><div class="tm"><div class="tt">${esc(g.measured_at)}</div><div class="tmeta"><span>${g.weight_g?g.weight_g+' g':''}</span>${g.length_cm?`<span>${g.length_cm} cm</span>`:''}${g.head_circ_cm?`<span>HC ${g.head_circ_cm} cm</span>`:''}</div></div></div>`).join(''):`<p class="empty">—</p>`;
@@ -323,17 +342,16 @@ function renderHome(){
   if(!SUMMARY)return;
   const s=SUMMARY, stage=s.stage, week=s.week;
   const triKey=stage==='pregnancy'?(week<14?'trimester_1':week<28?'trimester_2':'trimester_3'):stage;
-  $('#hStage').textContent=stage==='pregnancy'?tr(triKey):tr(stage==='postpartum'?'stage_postpartum_s':'stage_baby_s');
+  $('#hChip').textContent=stage==='pregnancy'?tr('my_pregnancy'):tr(stage==='postpartum'?'stage_postpartum_s':'stage_baby_s');
   $('#hWeek').textContent=stage==='pregnancy'?`${tr('week')} ${week}`:tr(stage==='postpartum'?'stage_postpartum_s':'stage_baby_s');
   $('#hTri').textContent=stage==='pregnancy'?`${week} / 40`:'';
   $('#hEdd').textContent=s.edd||tr('not_set');
   $('#hNext').textContent=s.next?s.next.title+' · '+s.next.due:tr('all_done');
   const pct=stage==='pregnancy'?Math.min(100,Math.round(week/40*100)):100;
   $('#hPct').textContent=pct+'%';
-  $('#hRing').style.background=`conic-gradient(#ffd98a ${pct}%, rgba(255,255,255,.22) 0)`;
-  const ok=s.subscription?.active;
-  $('#subChipText').textContent=ok?`${tr('subscribed')} · ${tr('plan')}: ${s.subscription.plan}`:tr('subscribe');
-  $('#subChipText').className=ok?'on':'';
+  $('#hRing').style.background=`conic-gradient(var(--pink) ${pct}%, #f6e0e6 0)`;
+  $('#dLabel').textContent=stage==='pregnancy'?`${tr('day')} ${(week||0)*7}`:tr('all_done');
+  $('#dRing').style.background=`conic-gradient(var(--pink) 0deg,var(--lilac) 110deg,var(--mint) 210deg,#f6e0e6 210deg)`;
   const open=TASKS.filter(t=>!t.done).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,2);
   $('#homeTasks').innerHTML=open.length?open.map(t=>`<div class="task"><div class="tm"><div class="tt">${esc(t.title)}</div><div class="tmeta"><span>${esc(t.due)}</span></div></div></div>`).join(''):`<p class="empty">${esc(tr('all_done'))}</p>`;
 }

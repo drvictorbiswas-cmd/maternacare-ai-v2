@@ -46,6 +46,10 @@ const STRINGS = {
     growth:'Growth tracking',growth_desc:'Weight, length aur head circumference record karein. Samay ke saath track karein.',weight_g:'Weight (g)',length_cm:'Length (cm)',head_circ_cm:'Head circ. (cm)',
     feeding:'Feeding log',feeding_desc:'Feeding session record karein. Breastfeeding aur zyada support karta hai.',feed_breast:'Breast',feed_bottle:'Bottle',feed_mixed:'Mixed',feed_solids:'Solids',notes:'Note',
     imm_desc:'Janam tareekh par aadharit MoHFW schedule. Doses ko given mark karein.',mark_given:'Given mark karein',given_on:'Diya gaya',no_babies:'Abhi koi baby nahi. Track karne ke liye ek add karein.',select_baby:'Pehle ek baby chunein.',
+    daily_tracker:'Daily Tracker',daily_tracker_desc:"Log your Mood, Sleep, Water, Steps And See How You're Progressing",my_pregnancy:'My Pregnancy',day:'Day',
+    baby_hero_title:'Every Movement as Your Little Miracle',height:'Height',symptoms:'Symptoms',mood:'Mood',activity:'Activity',recent_symptoms:'Recent Symptoms',logged:'logged',symptom:'Symptom',mild:'Mild',moderate:'Moderate',strong:'Strong',prenatal_vitamins:'Prenatal Vitamins',kick_count:'Kick Count Session',
+    daily_tracker:'Daily Tracker',daily_tracker_desc:'Apna Mood, Neend, Pani, Steps log karein aur progress dekhein',my_pregnancy:'Meri Pregnancy',day:'Din',
+    baby_hero_title:'Har Harkat Aapke Chhote Chamatkar Ki Tarah',height:'Lambai',symptoms:'Lakshan',mood:'Mood',activity:'Activity',recent_symptoms:'Haal ke Lakshan',logged:'darz',symptom:'Lakshan',mild:'Halka',moderate:'Madhya',strong:'Tez',prenatal_vitamins:'Prenatal Vitamins',kick_count:'Kick Count Session',
     account:'Account',demo_note:'Configure Firebase in fbcfg.js for real accounts.',
   },
   hi: {
@@ -126,6 +130,8 @@ const STRINGS = {
     growth:'বৃদ্ধি পর্যবেক্ষণ',growth_desc:'ওজন, দৈর্ঘ্য ও মাথার পরিধি রেকর্ড করুন। সময়ের সাথে ট্র্যাক করুন।',weight_g:'ওজন (গ্রাম)',length_cm:'দৈর্ঘ্য (সেমি)',head_circ_cm:'মাথার পরিধি (সেমি)',
     feeding:'খাওয়ানোর রেকর্ড',feeding_desc:'খাওয়ানোর সময় রেকর্ড করুন। বুকের দুধ ও অন্য সাহায্য করে।',feed_breast:'বুকের দুধ',feed_bottle:'বোতল',feed_mixed:'মিশ্র',feed_solids:'কঠিন খাবার',notes:'নোট',
     imm_desc:'জন্ম তারিখ ভিত্তিক MoHFW তালিকা। ডোজ গৃহীত হিসেবে চিহ্নিত করুন।',mark_given:'গৃহীত চিহ্নিত',given_on:'দেওয়া হয়েছে',no_babies:'এখনো কোনো শিশু নেই। ট্র্যাক শুরু করতে একজন যোগ করুন।',select_baby:'প্রথমে একটি শিশু বেছে নিন।',
+    daily_tracker:'ডেইলি ট্র্যাকার',daily_tracker_desc:'মood, ঘুম, পানি, পদক্ষেপ রেকর্ড করে অগ্রগতি দেখুন',my_pregnancy:'আমার গর্ভ',day:'দিন',
+    baby_hero_title:'প্রতিটি নড়াচড়া আপনার ছোট্ট অলৌকিকতা',height:'উচ্চতা',symptoms:'লক্ষণ',mood:'মood',activity:'কার্যকলাপ',recent_symptoms:'সাম্প্রতিক লক্ষণ',logged:'রেকর্ড',symptom:'লক্ষণ',mild:'হালকা',moderate:'মাঝারি',strong:'শক্ত',prenatal_vitamins:'প্রসব-পূর্ব ভিটামিন',kick_count:'কিক কাউন্ট সেশন',
     account:'অ্যাকাউন্ট',demo_note:'বাস্তব অ্যাকাউন্টের জন্য fbcfg.js-এ Firebase সেট করুন।',
   },
 };
