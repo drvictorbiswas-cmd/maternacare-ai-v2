@@ -1,4 +1,5 @@
 /* Maternacare AI — animated, API-driven frontend. */
+window.addEventListener('error',e=>{ let d=document.getElementById('jserr'); if(!d){d=document.createElement('div');d.id='jserr';d.style.cssText='position:fixed;top:0;left:0;right:0;z-index:300;background:#b0454f;color:#fff;padding:10px;font:12px monospace';document.body.appendChild(d);} d.textContent='Error: '+(e.message||'unknown'); });
 let LANG = localStorage.getItem('mc_lang') || 'en';
 let TOKEN = localStorage.getItem('mc_token') || '';
 let USER = JSON.parse(localStorage.getItem('mc_user') || 'null');
@@ -210,12 +211,16 @@ async function refreshAll(){
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 
 (async function init(){
-  applyLang();
-  setTimeout(()=>$('#splash').classList.add('out'),900);
-  if(TOKEN){
-    try{ USER=await api('/me'); localStorage.setItem('mc_user',JSON.stringify(USER)); await refreshAll();
-      const p=await api('/profile').catch(()=>null);
-      go(p?'home':'onboarding');
-    }catch(_){ TOKEN='';USER=null;localStorage.removeItem('mc_token');showAuth(); }
-  } else showAuth();
+  try{
+    applyLang();
+    showAuth(); // show login immediately — never block the UI on network calls
+    if(TOKEN){
+      try{
+        USER=await api('/me'); localStorage.setItem('mc_user',JSON.stringify(USER));
+        await refreshAll();
+        const p=await api('/profile').catch(()=>null);
+        if(p) go('home'); else go('onboarding');
+      }catch(_){ TOKEN='';USER=null;localStorage.removeItem('mc_token');localStorage.removeItem('mc_user'); }
+    }
+  }catch(err){ toast('Startup issue: '+err.message); showAuth(); }
 })();
