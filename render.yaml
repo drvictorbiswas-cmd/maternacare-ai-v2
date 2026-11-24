@@ -21,7 +21,5 @@ services:
         value: ""
       - key: DATABASE_PATH
         value: /app/data/maternacare.db
-    disk:
-      name: maternacare-data
-      mountPath: /app/data
-      sizeGB: 1
+    # NOTE: persistent disks are not available on the free plan. Data will be
+    # ephemeral until you upgrade and attach a disk (or use managed Postgres).
