@@ -1,19 +1,33 @@
-# Maternacare AI — Full-stack app
+# Maternacare AI — Hardened full-stack app (Phase 0 + 1)
 
-A real app: **FastAPI backend + SQLite database + JWT auth + Razorpay verification + animated offline-capable PWA frontend.**
+FastAPI + SQLite/Postgres-ready backend, animated PWA frontend, JWT auth, real Razorpay
+verification, server-side entitlement, audit log, mother/baby/family records, and versioned
+migrations.
 
-> ⚠️ Prototype — health education/navigation only, not clinically validated, not for diagnosis or emergencies.
+> ⚠️ **Prototype.** Health education & navigation only. Not clinically validated, not medical
+> advice, not for diagnosis or emergencies. See `MEDICAL_SAFETY_AUDIT.md`.
 
-## What's real vs the old static PWA
+## What changed in Phase 0 + 1
 
-| Feature | Old static PWA | This full app |
-|---|---|---|
-| Backend | none | FastAPI + SQLite |
-| Accounts | browser-only demo | JWT + hashed passwords, email or phone |
-| Per-person data | localStorage namespace | server-side rows keyed by user id |
-| Payments | client-side only | server-side verification with Razorpay signature (HMAC SHA256) |
-| API | none | 20+ REST endpoints |
-| Animation | none | page transitions, staggered lists, bottom sheets, ripple, toasts, typing dots, progress ring, haptics |
+**Containment**
+- Removed the SQLite DB from git tracking and added `data/*.db`, `.env*` to `.gitignore`.
+- `JWT_SECRET` must be a strong value in production; weak/missing secrets fail at startup.
+- Removed **all** fake/simulated payment paths. `/payments/verify` fails closed (503) unless
+  Razorpay credentials are configured and rejects unknown orders / bad signatures.
+- Subscription entitlement is enforced **server-side** on education, traditions, triage and chat.
+- CORS restricted to explicit origins; security headers (CSP, HSTS, nosniff, frame deny) added.
+- Rate limiting on auth endpoints; strong password policy; invalid JWTs rejected.
+- Persistent "education only — not medical advice" labels; pinch-zoom re-enabled (accessibility).
+- No inline JS handlers — compatible with a strict Content-Security-Policy.
+
+**Data model**
+- Versioned migrations (`backend/migrations.py`, `PRAGMA user_version`), applied on startup.
+- New tables: `mothers`, `babies`, `family_links`, `pregnancies`, `consents`, `care_plan_items`,
+  `growth_measurements`, `immunization_records`, `feeding_sessions`, `plans`, `payment_events`,
+  `audit_log`, `refresh_tokens`.
+- APIs for babies, growth measurements and immunization schedules/records.
+- Consent records, data export (`GET /api/export`) and account erasure (`DELETE /api/account`).
+- Per-user task IDs (fixes cross-user PK collisions).
 
 ## Run locally
 
@@ -23,45 +37,36 @@ pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8000
 # open http://localhost:8000
 ```
-The backend serves the frontend from `../frontend` automatically.
 
-## Test
+For development, set `APP_ENV=development` (default) and optionally `JWT_SECRET`.
+For production set: `APP_ENV=production`, `JWT_SECRET` (32+ chars), `ALLOWED_ORIGINS`,
+`RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `DATABASE_PATH`.
+
+## Tests
 
 ```bash
-cd backend && python3 test_api.py   # 19 checks, all pass
+cd backend && python3 test_hardened.py   # 34 checks — all pass
 ```
+Note: the old `test_api.py` asserted the insecure fake-payment bypass and is obsolete; use
+`test_hardened.py`.
 
-## Deploy (Render free tier)
+## Deploy
 
-1. Sign up at https://render.com with GitHub.
-2. Push this folder as a GitHub repo.
-3. New → Blueprint → connect the repo → `render.yaml` is detected → Apply.
-4. Set real `JWT_SECRET`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` in Render env vars.
-5. You get a public HTTPS URL.
+`render.yaml` provisions a Docker web service with a persistent 1 GB disk at `/app/data`,
+`healthCheckPath: /health`, generated `JWT_SECRET`, explicit `ALLOWED_ORIGINS`, and empty
+Razorpay secrets to be filled in the Render dashboard.
 
-Docker alternative: `docker build -t maternacare . && docker run -p 10000:10000 maternacare`.
+`docker build -t maternacare . && docker run -p 10000:10000 -v $PWD/data:/app/data maternacare`
 
-## Config (env vars)
+## Remaining work (from approved roadmap)
 
-| Var | Default | Purpose |
-|---|---|---|
-| `JWT_SECRET` | dev-only… | **Set a strong random secret in production** |
-| `RAZORPAY_KEY_ID` | empty | Client-side checkout key ID |
-| `RAZORPAY_KEY_SECRET` | empty | Server-side signature verification; if empty, verification is skipped (demo mode) |
-| `DATABASE_PATH` | backend/data/maternacare.db | SQLite file — put on a persistent volume |
+- Phase 2: clinician-reviewed triage rebuild, false-negative regression corpus, risk-adaptive
+  WHO/NHM schedules, immunization UI, content versioning.
+- Phase 3: refresh-token rotation, email verification, notifications, caregiver/clinician roles,
+  growth charts, remove duplicate frontend clinical engine, accessibility pass.
+- Phase 4: CI, managed Postgres, observability, clinical governance, DPDP legal review.
 
-## API overview
-- `POST /api/auth/signup`, `/api/auth/login`, `GET /api/me`
-- `GET/POST /api/profile`, `/api/tasks`, `/api/tasks/{id}/done`, `DELETE /api/tasks/{id}`
-- `GET /api/education`, `/api/traditions`, `/api/triage`, `POST /api/chat`, `GET /api/chat`
-- `GET /api/summary`, `POST /api/payments/order`, `/api/payments/verify`, `/api/feedback`
-- `GET /health`
+## Audit documents
 
-## Safety
-Danger signs are triaged before any general chat response, over-trigger by design, and never reassure a serious symptom. No dosages are invented. Sources are tagged.
-
-## Files
-- `backend/main.py` — FastAPI app, auth, DB, payments, APIs
-- `backend/engine.py` — clinical rules engine
-- `frontend/` — animated PWA (index.html, style.css, app.js, engine.js, sw.js, manifest.json, icon.svg)
-- `Dockerfile`, `render.yaml` — deploy configs
+`TECHNICAL_AUDIT.md`, `FEATURE_MATRIX.md`, `DATABASE_DESIGN.md`, `SECURITY_AUDIT.md`,
+`MEDICAL_SAFETY_AUDIT.md`, `IMPLEMENTATION_ROADMAP.md`.

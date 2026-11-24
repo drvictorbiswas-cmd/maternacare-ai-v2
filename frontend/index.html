@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <meta name="theme-color" content="#0d5c63"/>
 <meta name="description" content="Maternacare AI — maternal & child health companion"/>
 <title>Maternacare AI</title>
@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-<div class="disclaimer" id="disclaimer"><span class="di">i</span><p id="disclaimerText"></p><button onclick="this.parentElement.classList.add('hide')">×</button></div>
+<div class="disclaimer" id="disclaimer"><span class="di">i</span><p id="disclaimerText"></p><button id="disclaimerClose" aria-label="Dismiss notice">×</button></div>
 
 <header class="header">
   <div class="hdr"><a class="brand" href="#" data-tab="home"><span class="bi">✚</span><b data-i18n="app_name">Maternacare AI</b></a>
@@ -88,9 +88,9 @@
   <div class="card"><div class="ch"><h2 data-i18n="calendar_title">Calendar</h2><button class="link" data-tab="calendar" data-i18n="nav_calendar">Calendar</button></div><div id="homeTasks"></div></div>
 </section>
 
-<section id="learn" class="page hidden"><div class="card"><h1 data-i18n="nav_learn">Learn</h1><p class="muted" id="learnLine"></p><div id="eduList" class="stagger"></div></div><div class="card"><p class="muted" data-i18n="sources"></p></div></section>
-<section id="trad" class="page hidden"><div class="card"><h1 data-i18n="trad_title">Tradition vs Evidence</h1><p class="muted" data-i18n="trad_desc"></p><input class="search" id="tradSearch" data-ph="trad_search"/><div id="tradList" class="stagger"></div></div></section>
-<section id="safety" class="page hidden"><div class="card emer-card"><h1>🚨 <span data-i18n="open_emergency"></span></h1><p class="emer-text" id="emerBanner"></p><p class="muted" id="emerLine"></p></div>
+<section id="learn" class="page hidden"><div class="card"><h1 data-i18n="nav_learn">Learn</h1><p class="muted" id="learnLine"></p><p class="education-label" data-i18n="education_only"></p><div id="eduList" class="stagger"></div></div><div class="card"><p class="muted" data-i18n="sources"></p></div></section>
+<section id="trad" class="page hidden"><div class="card"><h1 data-i18n="trad_title">Tradition vs Evidence</h1><p class="muted" data-i18n="trad_desc"></p><p class="education-label" data-i18n="education_only"></p><input class="search" id="tradSearch" data-ph="trad_search"/><div id="tradList" class="stagger"></div></div></section>
+<section id="safety" class="page hidden"><div class="card emer-card"><h1>🚨 <span data-i18n="open_emergency"></span></h1><p class="emer-text" id="emerBanner"></p><p class="muted" id="emerLine"></p></div><p class="education-label" data-i18n="education_only"></p>
   <div class="card"><h2 data-i18n="quick_check"></h2><p class="muted" data-i18n="quick_check_desc"></p><form class="inline" id="safetyF"><input id="safetyIn" data-ph="symptom"/><button class="btn danger ripple" data-i18n="check_now"></button></form><div id="safetyOut"></div></div></section>
 <section id="calendar" class="page hidden"><div class="card"><h1 data-i18n="calendar_title"></h1><p class="muted" data-i18n="calendar_desc"></p>
   <div class="add"><input id="newTask" data-ph="task_name"/><input type="date" id="newDue"/><button class="btn primary ripple" id="addBtn" data-i18n="add"></button></div><div id="taskList" class="stagger"></div></div></section>
@@ -104,11 +104,11 @@
 <footer class="footer"><p id="foot"></p></footer>
 <div class="toast" id="toast"></div>
 
-<div class="sheet" id="feedbackSheet" style="display:none"><div class="sheet-backdrop" onclick="closeSheet('feedbackSheet')"></div><div class="sheet-box">
+<div class="sheet" id="feedbackSheet" style="display:none"><div class="sheet-backdrop" data-close-sheet="feedbackSheet"></div><div class="sheet-box">
   <div class="sheet-handle"></div><h3 data-i18n="report_issue"></h3><p class="muted" data-i18n="report_desc"></p>
   <textarea id="fbText" rows="4"></textarea><button class="btn primary full ripple" id="fbSend" data-i18n="send_feedback"></button></div></div>
 
-<div class="sheet" id="gate" style="display:none"><div class="sheet-backdrop" onclick="closeSheet('gate')"></div><div class="sheet-box">
+<div class="sheet" id="gate" style="display:none"><div class="sheet-backdrop" data-close-sheet="gate"></div><div class="sheet-box">
   <div class="sheet-handle"></div><div class="gate-mark">✚</div><h2 data-i18n="sub_title">Unlock full access</h2><p class="muted" data-i18n="sub_desc"></p>
   <div class="plans" id="gatePlans"></div><p class="hint" data-i18n="payment_note"></p></div></div>
 

@@ -19,6 +19,7 @@ async function api(path, opts={}){
   if(TOKEN) headers['Authorization']='Bearer '+TOKEN;
   const res=await fetch('/api'+path,{headers,...opts});
   let data={}; try{ data=await res.json(); }catch(_){}
+  if(res.status===403 && !path.includes('payments')){ showGate(); throw new Error('Subscription required'); }
   if(!res.ok) throw new Error(data.detail||('Request failed ('+res.status+')'));
   return data;
 }
@@ -55,6 +56,18 @@ $$('.tab,[data-tab]').forEach(b=>b.addEventListener('click',e=>{ e.preventDefaul
 document.addEventListener('pointerdown',e=>{ const b=e.target.closest('.ripple'); if(!b)return; const r=b.getBoundingClientRect(); b.style.setProperty('--rx',(e.clientX-r.left)+'px'); b.style.setProperty('--ry',(e.clientY-r.top)+'px'); });
 window.addEventListener('scroll',()=>$('#tabs')?.classList.toggle('scrolled',scrollY>10));
 function closeSheet(id){ $('#'+id).style.display='none'; }
+$('#disclaimerClose').addEventListener('click',()=>$('#disclaimer').classList.add('hide'));
+document.addEventListener('click',e=>{
+  const close=e.target.closest('[data-close-sheet]');
+  if(close){ closeSheet(close.dataset.closeSheet); return; }
+  const act=e.target.closest('[data-act]');
+  if(!act) return;
+  const {act:a,id:i,plan:p}=act.dataset;
+  if(a==='toggle') toggleTask(i);
+  else if(a==='del') delTask(i);
+  else if(a==='trad'){ const b=$('#tb'+i); if(b){b.classList.toggle('open'); buzz(8);} }
+  else if(a==='pay') startPay(p);
+});
 
 /* Auth */
 let authMode='login';
@@ -121,7 +134,7 @@ window.toggleTask=toggleTask; window.delTask=delTask;
 /* Trad */
 $('#tradSearch').addEventListener('input',()=>renderTrad());
 function loadTrad(){ api('/traditions?q='+encodeURIComponent($('#tradSearch').value)).then(d=>{TRAD=d;renderTrad();}); }
-window.tog=i=>{ const b=$('#tb'+i); b.classList.toggle('open'); buzz(8); };
+
 
 /* Chat */
 $('#chatF').addEventListener('submit',async e=>{
@@ -137,14 +150,11 @@ function scrollLog(){ const l=$('#log'); l.scrollTop=l.scrollHeight; }
 
 /* Subscriptions */
 const plans=[{id:'monthly',price:990,label:'Monthly'},{id:'yearly',price:7990,label:'Yearly (save 32%)'}];
-function planHTML(){ return plans.map(p=>`<div class="plan" onclick="startPay('${p.id}')"><div><b>${esc(p.label)}</b><small>INR ${p.price.toLocaleString('en-IN')}</small></div><div class="amt">₹${p.price.toLocaleString('en-IN')}</div></div>`).join(''); }
+function planHTML(){ return plans.map(p=>`<div class="plan" data-act="pay" data-plan="${p.id}" role="button" tabindex="0"><div><b>${esc(p.label)}</b><small>INR ${p.price.toLocaleString('en-IN')}</small></div><div class="amt">₹${p.price.toLocaleString('en-IN')}</div></div>`).join(''); }
 window.startPay=async id=>{
   let order; try{ order=await api('/payments/order?plan='+id); }catch(e){toast(e.message);return;}
   const key=order.key_id;
-  if(!key||key.includes('PLACEHOLDER')){
-    await post('/payments/verify',{razorpay_payment_id:'demo_'+Date.now(),razorpay_order_id:'order_demo',razorpay_signature:'demo',plan:id});
-    closeSheet('gate'); toast(tr('payment_success')); buzz(40); await refreshAll(); renderSub(); return;
-  }
+  if(!key||key.includes('PLACEHOLDER')){ toast('Payments are not configured on this server.'); return; }
   if(typeof Razorpay==='undefined'){ toast('Razorpay checkout unavailable'); return; }
   const rzp=new Razorpay({key,amount:order.amount,currency:'INR',name:'Maternacare AI',description:'Full access — '+id,
     notes:{user_id:USER.id},theme:{color:'#0d5c63'},
@@ -169,12 +179,12 @@ function eduHTML(items){ if(!items||!items.length)return `<p class="empty">${esc
 function renderTasks(){
   const list=$('#taskList');
   if(!TASKS.length){list.innerHTML=`<p class="empty">${esc(tr('all_done'))}</p>`;return;}
-  list.innerHTML=TASKS.map(t=>`<div class="task"><button class="tk ${t.done?'done':''}" onclick="toggleTask('${t.id}')">${t.done?'✓':''}</button><div class="tm"><div class="tt ${t.done?'done':''}">${esc(t.title)}</div><div class="tmeta"><span class="pill ${t.status}">${esc(tr(t.status))}</span><span>${esc(t.due)}</span>${t.week?`<span>${tr('week')} ${t.week}</span>`:''}</div></div>${t.custom?`<button class="tdel" onclick="delTask('${t.id}')">×</button>`:''}</div>`).join('');
+  list.innerHTML=TASKS.map(t=>`<div class="task"><button class="tk ${t.done?'done':''}" data-act="toggle" data-id="${esc(t.id)}" aria-label="Toggle task">${t.done?'✓':''}</button><div class="tm"><div class="tt ${t.done?'done':''}">${esc(t.title)}</div><div class="tmeta"><span class="pill ${t.status}">${esc(tr(t.status))}</span><span>${esc(t.due)}</span>${t.week?`<span>${tr('week')} ${t.week}</span>`:''}</div></div>${t.custom?`<button class="tdel" data-act="del" data-id="${esc(t.id)}" aria-label="Remove">×</button>`:''}</div>`).join('');
 }
 function renderTrad(){
   const q=$('#tradSearch').value.toLowerCase().trim();
   const items=TRAD.filter(x=>!q||x.name.toLowerCase().includes(q));
-  $('#tradList').innerHTML=items.map((x,i)=>`<div class="trad"><div class="trad-h" onclick="tog(${i})"><h3>${esc(x.name)}</h3><span class="badge ${x.verdict}">${esc((Engine.VERDICT[x.verdict]||Engine.VERDICT.insufficient)[{en:0,hi:1,bn:2}[LANG]])}</span></div><div class="trad-b" id="tb${i}"><div class="trow"><b>${tr('belief')}</b><p>${esc(x.belief)}</p></div><div class="trow"><b>${tr('why')}</b><p>${esc(x.why)}</p></div><div class="trow"><b>${tr('evidence')}</b><p>${esc(x.evidence)}</p></div><div class="trow"><b>${tr('benefit')}</b><p>${esc(x.benefit)}</p></div><div class="trow"><b>${tr('risk')}</b><p>${esc(x.risk)}</p></div><div class="trow"><b>${tr('alternative')}</b><p>${esc(x.alternative)}</p></div><div class="trow doc"><b>${tr('when_doctor')}</b><p>${esc(x.doctor)}</p></div><div class="trow"><b>${tr('sources')}</b><p class="muted">${esc(x.source)}</p></div></div></div>`).join('');
+  $('#tradList').innerHTML=items.map((x,i)=>`<div class="trad"><div class="trad-h" data-act="trad" data-i="${i}" role="button" tabindex="0"><h3>${esc(x.name)}</h3><span class="badge ${x.verdict}">${esc((Engine.VERDICT[x.verdict]||Engine.VERDICT.insufficient)[{en:0,hi:1,bn:2}[LANG]])}</span></div><div class="trad-b" id="tb${i}"><div class="trow"><b>${tr('belief')}</b><p>${esc(x.belief)}</p></div><div class="trow"><b>${tr('why')}</b><p>${esc(x.why)}</p></div><div class="trow"><b>${tr('evidence')}</b><p>${esc(x.evidence)}</p></div><div class="trow"><b>${tr('benefit')}</b><p>${esc(x.benefit)}</p></div><div class="trow"><b>${tr('risk')}</b><p>${esc(x.risk)}</p></div><div class="trow"><b>${tr('alternative')}</b><p>${esc(x.alternative)}</p></div><div class="trow doc"><b>${tr('when_doctor')}</b><p>${esc(x.doctor)}</p></div><div class="trow"><b>${tr('sources')}</b><p class="muted">${esc(x.source)}</p></div></div></div>`).join('');
 }
 async function loadEdu(){ EDU=(await api('/education?language='+LANG)).items; $('#eduList').innerHTML=eduHTML(EDU); }
 function renderHome(){
