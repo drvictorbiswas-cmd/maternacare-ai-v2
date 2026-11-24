@@ -91,7 +91,74 @@ $('#authGo').addEventListener('click',async ()=>{
   }catch(e){ $('#authErr').textContent=e.message; buzz(60); }
   finally{ busy=false; $('#authGo').textContent=tr(authMode==='login'?'sign_in':'sign_up'); }
 });
-$('#accountBtn').addEventListener('click',()=>{ if(USER&&confirm(USER.email||USER.phone||'')+' — '+tr('sign_out')+'?'){ TOKEN='';USER=null;localStorage.removeItem('mc_token');localStorage.removeItem('mc_user');showAuth(); } else if(!USER) showAuth(); });
+$('#accountBtn').addEventListener('click',()=>{ if(USER&&confirm((USER.email||USER.phone||'')+' — '+tr('sign_out')+'?')){ TOKEN='';USER=null;localStorage.removeItem('mc_token');localStorage.removeItem('mc_user');showAuth(); } else if(!USER) showAuth(); });
+
+/* OTP phone auth */
+let otpStep='phone', otpPhone='', otpResendLeft=0, otpResendTimer=null;
+function setAuthTab(tab){
+  $('#atPassword').classList.toggle('active',tab==='password');
+  $('#atOtp').classList.toggle('active',tab==='otp');
+  $('#authModePassword').classList.toggle('hidden',tab!=='password');
+  $('#authModeOtpPhone').classList.toggle('hidden',tab!=='otp'||otpStep!=='phone');
+  $('#authModeOtpCode').classList.toggle('hidden',tab!=='otp'||otpStep!=='code');
+  $('#authErr').textContent=''; $('#otpErr').textContent=''; $('#otpCodeErr').textContent='';
+}
+$('#atPassword').addEventListener('click',()=>{otpStep='phone';setAuthTab('password');});
+$('#atOtp').addEventListener('click',()=>{otpStep='phone';setAuthTab('otp');$('#otpPhone').focus();});
+
+function buildOtpInputs(){
+  const c=$('#otpInputs'); c.innerHTML='';
+  for(let i=0;i<6;i++){
+    const inp=document.createElement('input');
+    inp.className='otp-input'; inp.maxLength=1; inp.inputMode='numeric';
+    inp.addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,''); if(e.target.value&&i<5)c.children[i+1].focus();});
+    inp.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!e.target.value&&i>0)c.children[i-1].focus();});
+    c.appendChild(inp);
+  }
+}
+buildOtpInputs();
+function getOtpCode(){return[...$('#otpInputs').children].map(i=>i.value).join('');}
+function clearOtp(){[...$('#otpInputs').children].forEach(i=>{i.value='';i.classList.remove('error','filled');});$('#otpInputs').children[0]?.focus();}
+function startResendTimer(){
+  otpResendLeft=60; const link=$('#otpResendLink');
+  link.textContent=tr('otp_resend_link')+` (${otpResendLeft}s)`; link.style.pointerEvents='none'; link.style.opacity='.5';
+  if(otpResendTimer)clearInterval(otpResendTimer);
+  otpResendTimer=setInterval(()=>{otpResendLeft--;link.textContent=tr('otp_resend_link')+` (${otpResendLeft}s)`;if(otpResendLeft<=0){clearInterval(otpResendTimer);link.style.pointerEvents='auto';link.style.opacity='1';link.textContent=tr('otp_resend_link');}},1000);
+}
+$('#otpSend').addEventListener('click',async()=>{
+  const phone=$('#otpPhone').value.trim().replace(/\s/g,'');
+  if(!phone){$('#otpErr').textContent=tr('phone_required');return;}
+  if(!/^\+?\d{8,15}$/.test(phone)){$('#otpErr').textContent='Invalid phone number';return;}
+  busy=true;$('#otpSend').textContent='…';
+  try{
+    const r=await post('/auth/send-otp',{phone,purpose:'login'});
+    otpPhone=phone;otpStep='code';setAuthTab('otp');startResendTimer();
+  }catch(e){$('#otpErr').textContent=e.message;buzz(60);}
+  finally{busy=false;$('#otpSend').textContent=tr('send_otp');}
+});
+$('#otpResendLink').addEventListener('click',async()=>{
+  if(otpResendLeft>0)return;busy=true;
+  try{await post('/auth/send-otp',{phone:otpPhone,purpose:'login'});startResendTimer();toast('Code resent');}catch(e){toast(e.message);}finally{busy=false;}
+});
+$('#otpVerify').addEventListener('click',async()=>{
+  const code=getOtpCode();
+  if(code.length!==6){$('#otpCodeErr').textContent='Enter the 6-digit code';return;}
+  busy=true;$('#otpVerify').textContent='…';
+  try{
+    const data=await post('/auth/verify-otp',{phone:otpPhone,code,purpose:'login'});
+    TOKEN=data.token;USER=data.user;localStorage.setItem('mc_token',TOKEN);localStorage.setItem('mc_user',JSON.stringify(USER));
+    buzz(30);$('#authPage').classList.add('hidden');
+    await refreshAll();
+    const hasProfile=await api('/profile').catch(()=>null);
+    go(hasProfile?DEST_AFTER_AUTH:'onboarding');
+    toast(tr('welcome'));
+  }catch(e){$('#otpCodeErr').textContent=e.message;[...$('#otpInputs').children].forEach(i=>i.classList.add('error'));buzz(60);}
+  finally{busy=false;$('#otpVerify').textContent=tr('verify_otp');}
+});
+$('#otpBack').addEventListener('click',()=>{otpStep='phone';setAuthTab('otp');clearOtp();});
+$('#otpInputs').addEventListener('input',e=>{
+  if(e.target.classList.contains('otp-input')){[...$('#otpInputs').children].forEach((i)=>{i.classList.toggle('filled',!!i.value);i.classList.remove('error');});}
+});
 
 /* Onboarding */
 $('#sStage').addEventListener('change',e=>$('#pregFields').style.display=e.target.value==='pregnant'?'block':'none');
