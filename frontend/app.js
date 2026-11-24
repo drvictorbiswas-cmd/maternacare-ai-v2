@@ -48,6 +48,7 @@ function go(tab, skipAuth=false){
   window.scrollTo({top:0,behavior:'smooth'}); buzz(8);
   if(tab==='chat') renderChat();
   if(tab==='sub') renderSub();
+  if(tab==='baby') loadBabies();
   if(tab==='trad'&&!TRAD.length) loadTrad();
   if(tab==='learn'&&!EDU.length) loadEdu();
 }
@@ -237,6 +238,69 @@ function renderSub(){
   $('#subPlans').innerHTML=planHTML();
 }
 $('#signOutBtn').addEventListener('click',()=>{TOKEN='';USER=null;localStorage.removeItem('mc_token');localStorage.removeItem('mc_user');showAuth();});
+
+/* Baby: growth / feeding / immunization */
+let BABIES = [], BABY_ID = '', IMM = [], GROWTH = [], FEEDING = [];
+function setBaby(id){ BABY_ID=id; renderBabyDetail(); }
+async function loadBabies(){
+  BABIES = await api('/babies').catch(()=>[]);
+  renderBabyList();
+  if(BABIES.length && !BABY_ID) BABY_ID = BABIES[0].id;
+  renderBabyDetail();
+}
+function renderBabyList(){
+  const el=$('#babyList');
+  if(!BABIES.length){ el.innerHTML=`<p class="empty">${esc(tr('no_babies'))}</p>`; return; }
+  el.innerHTML=BABIES.map(b=>`<div class="task" style="cursor:pointer" data-act="baby" data-id="${esc(b.id)}"><div class="tm"><div class="tt">${esc(b.name||tr('baby'))}</div><div class="tmeta"><span>${esc(b.date_of_birth)}</span>${b.birth_weight_g?`<span>${b.birth_weight_g} g</span>`:''}</div></div>${BABY_ID===b.id?'<span class="pill upcoming">✓</span>':''}</div>`).join('');
+}
+function renderBabyDetail(){
+  const detail=$('#babyDetail');
+  if(!BABY_ID){ detail.classList.add('hidden'); return; }
+  detail.classList.remove('hidden');
+  $('#gDate').value=new Date().toISOString().slice(0,10);
+  $('#fDate').value=new Date().toISOString().slice(0,10);
+  loadGrowth(); loadFeeding(); loadImm();
+}
+async function loadGrowth(){
+  GROWTH=await api('/growth/'+BABY_ID).catch(()=>[]);
+  $('#growthList').innerHTML=GROWTH.length?GROWTH.map(g=>`<div class="task"><div class="tm"><div class="tt">${esc(g.measured_at)}</div><div class="tmeta"><span>${g.weight_g?g.weight_g+' g':''}</span>${g.length_cm?`<span>${g.length_cm} cm</span>`:''}${g.head_circ_cm?`<span>HC ${g.head_circ_cm} cm</span>`:''}</div></div></div>`).join(''):`<p class="empty">—</p>`;
+}
+async function loadFeeding(){
+  FEEDING=await api('/feeding/'+BABY_ID).catch(()=>[]);
+  $('#feedingList').innerHTML=FEEDING.length?FEEDING.map(f=>`<div class="task"><div class="tm"><div class="tt">${esc(f.started_at)}</div><div class="tmeta"><span class="pill upcoming">${esc(f.type)}</span>${f.notes?`<span>${esc(f.notes)}</span>`:''}</div></div></div>`).join(''):`<p class="empty">—</p>`;
+}
+async function loadImm(){
+  IMM=await api('/immunizations/'+BABY_ID).catch(()=>[]);
+  $('#immList').innerHTML=IMM.length?IMM.map((v,i)=>`<div class="task"><button class="tk ${v.given?'done':''}" data-act="imm" data-i="${i}" aria-label="Toggle vaccine">${v.given?'✓':''}</button><div class="tm"><div class="tt ${v.given?'done':''}">${esc(v.title)}</div><div class="tmeta"><span>${esc(v.due)}</span><span class="pill ${v.given?'done':'upcoming'}">${v.given?tr('given_on'):tr('mark_given')}</span></div></div></div>`).join(''):`<p class="empty">—</p>`;
+}
+$('#addBabyBtn').addEventListener('click',()=>{$('#babySheet').style.display='block';$('#bName').value='';$('#bDob').value='';$('#bWeight').value='';});
+$('#saveBaby').addEventListener('click',async()=>{
+  const name=$('#bName').value.trim(), dob=$('#bDob').value;
+  if(!name||!dob){toast(tr('baby_name')+' / '+tr('dob'));return;}
+  try{
+    const r=await post('/babies',{name,date_of_birth:dob,sex:$('#bSex').value||null,birth_weight_g:$('#bWeight').value?+$('#bWeight').value:null});
+    closeSheet('babySheet');buzz(30);BABY_ID=r.id;await loadBabies();toast(tr('add_baby'));
+  }catch(e){toast(e.message);}
+});
+$('#addGrowth').addEventListener('click',async()=>{
+  if(!BABY_ID){toast(tr('select_baby'));return;}
+  const d=$('#gDate').value;if(!d){toast(tr('dob'));return;}
+  try{await post('/growth',{baby_id:BABY_ID,measured_at:d,weight_g:$('#gWeight').value?+$('#gWeight').value:null,length_cm:$('#gLength').value?+$('#gLength').value:null,head_circ_cm:$('#gHead').value?+$('#gHead').value:null});$('#gWeight').value='';$('#gLength').value='';$('#gHead').value='';await loadGrowth();buzz(15);}catch(e){toast(e.message);}
+});
+$('#addFeeding').addEventListener('click',async()=>{
+  if(!BABY_ID){toast(tr('select_baby'));return;}
+  try{await post('/feeding',{baby_id:BABY_ID,started_at:$('#fDate').value,type:$('#fType').value,notes:$('#fNote').value||null});$('#fNote').value='';await loadFeeding();buzz(15);}catch(e){toast(e.message);}
+});
+document.addEventListener('click',async e=>{
+  const a=e.target.closest('[data-act]');if(!a)return;
+  if(a.dataset.act==='baby'){setBaby(a.dataset.id);}
+  else if(a.dataset.act==='imm'){
+    const v=IMM[+a.dataset.i];if(!v)return;
+    if(v.given){toast(tr('given_on'));return;}
+    const code=v.title.split(',')[0].trim().split(' ')[0];
+    try{await post('/immunizations',{baby_id:BABY_ID,vaccine_code:code,due_date:v.due,given_date:new Date().toISOString().slice(0,10)});toast(tr('given_on'));await loadImm();buzz(20);}catch(err){toast(err.message);}
+  }
+});
 
 /* Feedback */
 $('#fbSend').addEventListener('click',async ()=>{const t=$('#fbText').value.trim();if(!t)return;await post('/feedback',{text:t});$('#fbText').value='';closeSheet('feedbackSheet');toast(tr('feedback_saved'));});

@@ -173,6 +173,22 @@ class ImmunizationIn(BaseModel):
     facility: str | None = None
 
 
+class FeedingIn(BaseModel):
+    baby_id: str
+    started_at: str
+    ended_at: str | None = None
+    type: str = 'breast'   # breast | bottle | mixed | solids
+    notes: str | None = None
+
+    @validator('started_at')
+    def valid_started_at(cls, v):
+        try:
+            date.fromisoformat(v)
+        except ValueError:
+            raise ValueError('Invalid started_at date')
+        return v
+
+
 # ----------------------------- health -----------------------------
 @app.get('/health')
 def health():
@@ -411,6 +427,29 @@ def immunizations_due(baby_id: str, uid=Depends(current_user)):
     for item in generated:
         item['given'] = item['title'] in given
     return generated
+
+
+# ----------------------------- feeding -----------------------------
+@app.post('/api/feeding')
+def add_feeding(body: FeedingIn, uid=Depends(current_user)):
+    with db() as c:
+        baby_owner(c, body.baby_id, uid)
+        c.execute('INSERT INTO feeding_sessions(id,baby_id,started_at,ended_at,type,notes) '
+                  'VALUES(?,?,?,?,?,?)',
+                  (uuid.uuid4().hex, body.baby_id, body.started_at, body.ended_at,
+                   body.type, body.notes))
+        sec.audit(c, uid, 'feeding_logged', 'baby', body.baby_id)
+        c.commit()
+    return {'ok': True}
+
+
+@app.get('/api/feeding/{baby_id}')
+def list_feeding(baby_id: str, uid=Depends(current_user)):
+    with db() as c:
+        baby_owner(c, baby_id, uid)
+        rows = c.execute('SELECT * FROM feeding_sessions WHERE baby_id=? ORDER BY started_at DESC LIMIT 50',
+                         (baby_id,)).fetchall()
+    return [dict(r) for r in rows]
 
 
 # ----------------------------- tasks -----------------------------

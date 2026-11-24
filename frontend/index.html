@@ -25,6 +25,7 @@
     <button class="tab" data-tab="trad"><span>⚖</span><i data-i18n="nav_traditional">Traditions</i></button>
     <button class="tab" data-tab="safety"><span>!</span><i data-i18n="nav_safety">Safety</i></button>
     <button class="tab" data-tab="calendar"><span>▦</span><i data-i18n="nav_calendar">Calendar</i></button>
+    <button class="tab" data-tab="baby"><span>♡</span><i data-i18n="nav_baby">Baby</i></button>
     <button class="tab" data-tab="chat"><span>◌</span><i data-i18n="nav_chat">Ask</i></button>
     <button class="tab" data-tab="sub"><span>✧</span><i data-i18n="manage_sub">Subscription</i></button>
   </nav>
@@ -123,6 +124,53 @@
   <div class="card"><h2 data-i18n="quick_check"></h2><p class="muted" data-i18n="quick_check_desc"></p><form class="inline" id="safetyF"><input id="safetyIn" data-ph="symptom"/><button class="btn danger ripple" data-i18n="check_now"></button></form><div id="safetyOut"></div></div></section>
 <section id="calendar" class="page hidden"><div class="card"><h1 data-i18n="calendar_title"></h1><p class="muted" data-i18n="calendar_desc"></p>
   <div class="add"><input id="newTask" data-ph="task_name"/><input type="date" id="newDue"/><button class="btn primary ripple" id="addBtn" data-i18n="add"></button></div><div id="taskList" class="stagger"></div></div></section>
+
+<!-- BABY: growth / feeding / immunization -->
+<section id="baby" class="page hidden">
+  <div class="card">
+    <div class="ch"><h1 data-i18n="baby_title">My Baby</h1><button class="btn ghost" id="addBabyBtn" data-i18n="add_baby">+ Add baby</button></div>
+    <div id="babyList" class="stagger"></div>
+  </div>
+  <div id="babyDetail" class="hidden">
+    <div class="card">
+      <h2 data-i18n="growth">Growth monitoring</h2>
+      <p class="muted" data-i18n="growth_desc">Record weight, length and head circumference. Track over time.</p>
+      <div class="add">
+        <input type="date" id="gDate"/>
+        <input type="number" id="gWeight" data-ph="weight_g" step="1"/>
+        <input type="number" id="gLength" data-ph="length_cm" step="0.1"/>
+        <input type="number" id="gHead" data-ph="head_circ_cm" step="0.1"/>
+        <button class="btn primary ripple" id="addGrowth" data-i18n="add">Add</button>
+      </div>
+      <div id="growthList"></div>
+    </div>
+    <div class="card">
+      <h2 data-i18n="feeding">Feeding log</h2>
+      <p class="muted" data-i18n="feeding_desc">Log a feeding session. Supports breastfeeding and more.</p>
+      <div class="add">
+        <select id="fType"><option value="breast" data-i18n="feed_breast">Breast</option><option value="bottle" data-i18n="feed_bottle">Bottle</option><option value="mixed" data-i18n="feed_mixed">Mixed</option><option value="solids" data-i18n="feed_solids">Solids</option></select>
+        <input type="date" id="fDate"/>
+        <input id="fNote" data-ph="notes"/>
+        <button class="btn primary ripple" id="addFeeding" data-i18n="add">Add</button>
+      </div>
+      <div id="feedingList"></div>
+    </div>
+    <div class="card">
+      <h2 data-i18n="immunizations">Immunizations</h2>
+      <p class="muted" data-i18n="imm_desc">MoHFW-aligned schedule based on date of birth. Mark doses as given.</p>
+      <div id="immList"></div>
+    </div>
+  </div>
+</section>
+
+<div class="sheet" id="babySheet" style="display:none"><div class="sheet-backdrop" data-close-sheet="babySheet"></div><div class="sheet-box">
+  <div class="sheet-handle"></div><h3 data-i18n="add_baby">Add baby</h3>
+  <label class="f"><span data-i18n="baby_name">Baby's name</span><input id="bName"/></label>
+  <label class="f"><span data-i18n="dob">Date of birth</span><input type="date" id="bDob"/></label>
+  <label class="f"><span data-i18n="sex">Sex</span><select id="bSex"><option value="">—</option><option value="male" data-i18n="male">Male</option><option value="female" data-i18n="female">Female</option></select></label>
+  <label class="f"><span data-i18n="birth_weight">Birth weight (g)</span><input type="number" id="bWeight"/></label>
+  <button class="btn primary full ripple" id="saveBaby" data-i18n="add_baby">Add baby</button>
+</div></div>
 <section id="chat" class="page hidden"><div class="card chat-card"><h1 data-i18n="chat_title"></h1><p class="muted" data-i18n="chat_desc"></p>
   <div class="log" id="log"></div><form class="inline" id="chatF"><input id="chatIn" data-ph="chat_placeholder" autocomplete="off"/><button class="btn primary ripple" data-i18n="send"></button></form></div></section>
 <section id="sub" class="page hidden"><div class="card"><h1 data-i18n="manage_sub">Subscription</h1><div id="subStatus"></div>
