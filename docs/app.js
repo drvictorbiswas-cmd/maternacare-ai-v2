@@ -1161,9 +1161,7 @@ async function agentSend(text) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + key,
-          'HTTP-Referer': location.origin || 'https://drvictorbiswas-cmd.github.io',
-          'X-Title': 'Maternacare AI'
+          'Authorization': 'Bearer ' + key
         },
         body: JSON.stringify({
           model: aiModel(),
