@@ -1133,7 +1133,16 @@ async function agentSend(text) {
   }
   if (!ok) {
     typing.remove();
-    agentHistory.push({ role: 'model', text: tr('agent_error') + (lastErr ? ' (' + lastErr + ')' : '') });
+    if (/quota|429|rate.limit|billing/i.test(lastErr)) {
+      agentHistory.push({ role: 'model', html: `<b>Gemini's free quota is finished for now.</b><br><br>
+        This is from Google, not a problem in the app. To keep using the AI assistant:<br>
+        <ul><li>Wait for the quota to reset (usually next day), or</li>
+        <li>Get a new key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com</a>, or</li>
+        <li>Enable billing on your Google AI project.</li></ul>
+        In the meantime, the <b>Ask</b> tab still works fully offline — no key or internet needed.` });
+    } else {
+      agentHistory.push({ role: 'model', text: tr('agent_error') + (lastErr ? ' (' + lastErr + ')' : '') });
+    }
   }
   agentBusy = false;
   if (btn) btn.disabled = false;
