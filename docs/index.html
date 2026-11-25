@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json"/>
 <link rel="icon" href="icon.svg" type="image/svg+xml"/>
 <link rel="apple-touch-icon" href="icon.svg"/>
-<link rel="stylesheet" href="style.css?v=11"/>
+<link rel="stylesheet" href="style.css?v=13"/>
 </head>
 <body>
 <div class="shell">
@@ -181,6 +181,12 @@
       </div>
 
       <div class="card">
+        <span class="eyebrow" data-i18n="complications">Complications reference</span>
+        <p class="subtitle" style="font-size:12.5px;margin-bottom:12px" data-i18n="complications_sub">Common pregnancy complications, their warning signs and what to do. Educational only.</p>
+        <div id="compList"></div>
+      </div>
+
+      <div class="card">
         <a class="btn primary full" href="tel:102" data-i18n="call">Call 102 ambulance</a>
         <a class="btn ghost full" href="tel:108" style="margin-top:9px" data-i18n="call108">Call 108 emergency</a>
       </div>
@@ -196,6 +202,18 @@
       <div class="card">
         <div class="section-head"><h2 data-i18n="care_calendar">Care calendar</h2><button class="link-btn" data-sheet="task" data-i18n="add">+ Add</button></div>
         <div class="list" id="allTasks"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head"><h2 data-i18n="agent_key">AI assistant key</h2></div>
+        <p class="subtitle" style="font-size:12px" data-i18n="agent_key_hint">Stored only on this device. Anyone with access to this browser can read it.</p>
+        <div class="field"><input class="inp" id="gemKey" type="password" placeholder="Paste your Gemini API key" autocomplete="off"/></div>
+        <div class="row">
+          <button class="btn soft full" id="gemSave">Save key</button>
+          <button class="btn ghost full" id="gemClear">Clear</button>
+        </div>
+        <p class="save-note" id="gemStatus"></p>
+        <p style="font-size:11px;color:var(--mut);margin-top:8px">Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com</a></p>
       </div>
 
       <div class="card">
@@ -225,6 +243,27 @@
 
   </main>
 
+  <!-- ================= FLOATING AI AGENT ================= -->
+  <button class="fab" id="fabAgent" aria-label="AI assistant"><span class="fab-pulse"></span>✦</button>
+
+  <div class="agent-overlay" id="agentOverlay" role="dialog" aria-modal="true" aria-labelledby="agentTitle">
+    <div class="agent-head">
+      <div class="avatar">✦</div>
+      <div>
+        <b id="agentTitle">Maternacare AI</b>
+        <span data-i18n="agent_sub">Answers your questions · educational only</span>
+      </div>
+      <button class="close" id="agentClose" aria-label="Close">✕</button>
+    </div>
+    <div class="agent-chips" id="agentChips"></div>
+    <div class="agent-log" id="agentLog"></div>
+    <p class="agent-note" data-i18n="agent_note">Educational only. Not a diagnosis. In an emergency call 102.</p>
+    <div class="agent-bar">
+      <textarea class="inp chat-inp" id="agentInput" rows="1" placeholder="Ask anything about pregnancy or baby care…" data-ph="agent_ph" aria-label="Message"></textarea>
+      <button class="send-btn" id="agentSend" aria-label="Send">➤</button>
+    </div>
+  </div>
+
   <!-- ================= BOTTOM NAV ================= -->
   <nav class="nav" aria-label="Main">
     <button data-go="home" class="on"><span>⌂</span><em data-i18n="nav_home">Home</em></button>
@@ -247,6 +286,6 @@
   <div class="toast-wrap" id="toasts"></div>
 </div>
 
-<script src="app.js?v=11" defer></script>
+<script src="app.js?v=13" defer></script>
 </body>
 </html>

@@ -50,7 +50,9 @@ const T = {
     disclaim: 'Educational only. Not a diagnosis. In an emergency call 102.',
     chart: 'Recent weight', not_set: 'Not set', you: 'You', assistant: 'Maternacare',
     due: 'Due', baby: 'Baby', nav_home: 'Home', nav_baby: 'Baby', nav_ask: 'Ask', nav_learn: 'Learn', nav_more: 'More',
-    welcome_title: 'Welcome 🌸', welcome_sub: 'A few details so the guidance fits you. Everything stays on this device.', start: 'Start'
+    welcome_title: 'Welcome 🌸', welcome_sub: 'A few details so the guidance fits you. Everything stays on this device.', start: 'Start',
+    agent_title:'Maternacare AI',agent_sub:'Answers your questions · educational only',agent_ph:'Ask anything about pregnancy or baby care…',agent_note:'Educational only. Not a diagnosis. In an emergency call 102.',agent_key:'AI assistant key',agent_key_hint:'Stored only on this device. Anyone with access to this browser can read it.',agent_thinking:'Thinking…',agent_error:'Sorry, I could not reach the AI right now. Try again in a moment.',agent_no_key:'Paste your free Gemini API key in More → AI assistant key to enable me.',agent_clear:'Clear chat',
+    complications:'Complications reference',complications_sub:'Common pregnancy complications, their warning signs and what to do. Educational only.',comp_signs:'Warning signs',comp_do:'What to do',comp_more:'Learn more'
   },
   hi: {
     greet_m: 'सुप्रभात', greet_a: 'नमस्कार', greet_e: 'शुभ संध्या', hello: 'नमस्ते,',
@@ -94,7 +96,9 @@ const T = {
     disclaim: 'केवल शैक्षिक। निदान नहीं। आपातकाल में 102 पर कॉल करें।',
     chart: 'हाल का वज़न', not_set: 'सेट नहीं', you: 'आप', assistant: 'Maternacare',
     due: 'देय', baby: 'शिशु', nav_home: 'होम', nav_baby: 'शिशु', nav_ask: 'पूछें', nav_learn: 'जानें', nav_more: 'और',
-    welcome_title: 'स्वागत है 🌸', welcome_sub: 'कुछ जानकारी ताकि सलाह आपके अनुसार हो। सब कुछ इसी डिवाइस पर रहता है।', start: 'शुरू करें'
+    welcome_title: 'स्वागत है 🌸', welcome_sub: 'कुछ जानकारी ताकि सलाह आपके अनुसार हो। सब कुछ इसी डिवाइस पर रहता है।', start: 'शुरू करें',
+    agent_title:'Maternacare AI',agent_sub:'Aapke sawalon ke jawab · sirf shiksha',agent_ph:'Garbhavastha ya shishu dekhbhal ke baare mein kuch bhi puchhein…',agent_note:'Sirf shiksha. Nidan nahi. Aapatakal mein 102 par call karein.',agent_key:'AI assistant key',agent_key_hint:'Sirf is device par. Is browser ko access karne wala koi bhi padh sakta hai.',agent_thinking:'Soch rahi hoon…',agent_error:'Maaf kijiye, abhi AI se sampark nahi ho paya. Thodi der baad try karein.',agent_no_key:'Mujhe enable karne ke liye More → AI assistant key mein apna free Gemini API key paste karein.',agent_clear:'Chat saaf karein',
+    complications:'Complications reference',complications_sub:'Aam garbhavastha complications, unke warning signs aur kya karein. Sirf shiksha.',comp_signs:'Warning signs',comp_do:'Kya karein',comp_more:'Aur jaanein'
   },
   bn: {
     greet_m: 'শুভ সকাল', greet_a: 'শুভ অপরাহ্ন', greet_e: 'শুভ সন্ধ্যা', hello: 'নমস্কার,',
@@ -138,7 +142,9 @@ const T = {
     disclaim: 'শুধু শিক্ষামূলক। রোগ নির্ণয় নয়। জরুরি হলে 102-এ কল করুন।',
     chart: 'সাম্প্রতিক ওজন', not_set: 'সেট নয়', you: 'আপনি', assistant: 'Maternacare',
     due: 'দেয়', baby: 'শিশু', nav_home: 'হোম', nav_baby: 'শিশু', nav_ask: 'জিজ্ঞাসা', nav_learn: 'জানুন', nav_more: 'আরও',
-    welcome_title: 'স্বাগতম 🌸', welcome_sub: 'কিছু তথ্য যাতে পরামর্শ আপনার জন্য মানানসই হয়। সবকিছু এই ডিভাইসেই থাকে।', start: 'শুরু করুন'
+    welcome_title: 'স্বাগতম 🌸', welcome_sub: 'কিছু তথ্য যাতে পরামর্শ আপনার জন্য মানানসই হয়। সবকিছু এই ডিভাইসেই থাকে।', start: 'শুরু করুন',
+    agent_title:'Maternacare AI',agent_sub:'আপনার প্রশ্নের উত্তর · শুধু শিক্ষামূলক',agent_ph:'গর্ভাবস্থা বা শিশুর যত্ন সম্পর্কে যেকোনো কিছু জিজ্ঞাসা করুন…',agent_note:'শুধু শিক্ষামূলক। রোগ নির্ণয় নয়। জরুরিতে 102-এ কল করুন।',agent_key:'AI assistant key',agent_key_hint:'শুধু এই ডিভাইসে। এই ব্রাউজারে প্রবেশ করতে পারে এমন যে কেউ পড়তে পারে।',agent_thinking:'ভাবছি…',agent_error:'দুঃখিত, এই মুহূর্তে AI-এ পৌঁছানো যায়নি। একটু পরে চেষ্টা করুন।',agent_no_key:'Amake chalu korte More → AI assistant key-e apnar free Gemini API key paste korun.',agent_clear:'চ্যাট মুছুন',
+    complications:'জটিলতার রেফারেন্স',complications_sub:'সাধারণ গর্ভাবস্থার জটিলতা, সতর্কতা চিহ্ন ও কী করবেন। শুধু শিক্ষামূলক।',comp_signs:'সতর্কতা চিহ্ন',comp_do:'কী করবেন',comp_more:'আরও জানুন'
   }
 };
 
@@ -754,8 +760,58 @@ function renderLearn() {
 function renderSafety() {
   $('#pregDanger').innerHTML = PREG_DANGER.map(d => `<div class="item"><div class="ib" style="background:var(--red-soft)">!</div><div class="im"><b>${esc(d[state.lang] || d.en)}</b></div></div>`).join('');
   $('#babyDanger').innerHTML = BABY_DANGER.map(d => `<div class="item"><div class="ib" style="background:var(--red-soft)">!</div><div class="im"><b>${esc(d[state.lang] || d.en)}</b></div></div>`).join('');
+  renderComplications();
 }
 
+const COMPLICATIONS = [
+  { name:{en:'Pre-eclampsia',hi:'प्री-एक्लेम्पसिया',bn:'প্রি-এক্লাম্পসিয়া'},
+    signs:{en:'Severe headache, blurred vision, sudden swelling of face/hands, pain under the ribs, high blood pressure.',hi:'तेज़ सिरदर्द, धुंधला दिखना, चेहरे/हाथों में अचानक सूजन, पसलियों के नीचे दर्द, उच्च रक्तचाप।',bn:'তীব্র মাথাব্যথা, ঝাপসা দৃষ্টি, মুখ/হাতে হঠাৎ ফোলা, পাঁজরের নিচে ব্যথা, উচ্চ রক্তচাপ।'},
+    do:{en:'Go to hospital the same day. Do not wait. Rest on your left side while you travel.',hi:'उसी दिन अस्पताल जाएँ। इंतज़ार न करें। यात्रा के दौरान बाएँ करवट लेटें।',bn:'একই দিনে হাসপাতালে যান। অপেক্ষা করবেন না। যাত্রায় বাম পাশে শুয়ে থাকুন।'},
+    more:{en:'Checked at every antenatal visit by blood pressure and urine test.',hi:'हर ANC विज़िट में रक्तचाप और मूत्र जाँच से जाँचा जाता है।',bn:'প্রতিটি ANC ভিজিটে রক্তচাপ ও প্রস্রাব পরীক্ষায় চেক করা হয়।'} },
+  { name:{en:'Gestational diabetes',hi:'गेस्टेशनल डायबिटीज़',bn:'গর্ভকালীন ডায়াবেটিস'},
+    signs:{en:'Often no symptoms. Sometimes excessive thirst, frequent urination, tiredness.',hi:'अक्सर कोई लक्षण नहीं। कभी-कभी अत्यधिक प्यास, बार-बार पेशाब, थकान।',bn:'প্রায়ই কোনো লক্ষণ নেই। কখনো অতিরিক্ত তৃষ্ণা, বারবার প্রস্রাব, ক্লান্তি।'},
+    do:{en:'Screening test around 24–28 weeks. Follow your doctor’s diet and activity plan.',hi:'24–28 सप्ताह में स्क्रीनिंग। डॉक्टर के आहार और गतिविधि प्लान का पालन करें।',bn:'২৪–২৮ সপ্তাহে স্ক্রিনিং। ডাক্তারের খাদ্য ও কার্যকলাপ পরিকল্পনা মেনে চলুন।'},
+    more:{en:'Good control protects you and your baby.',hi:'अच्छा नियंत्रण आपको और शिशु को सुरक्षित रखता है।',bn:'ভালো নিয়ন্ত্রণ আপনাকে ও শিশুকে রক্ষা করে।'} },
+  { name:{en:'Severe anaemia',hi:'गंभीर एनीमिया',bn:'তীব্র রক্তাল্পতা'},
+    signs:{en:'Extreme tiredness, breathlessness, pale skin/lips, fast heartbeat, dizziness.',hi:'अत्यधिक थकान, साँस फूलना, फीकी त्वचा/होंठ, तेज़ दिल की धड़कन, चक्कर।',bn:'অত্যধিক ক্লান্তি, শ্বাসকষ্ট, ফ্যাকাশে ত্বক/ঠোঁট, দ্রুত হৃদস্পন্দন, মাথা ঘোরা।'},
+    do:{en:'Ask for a haemoglobin test. Take iron and folic acid as prescribed. Eat iron-rich food with vitamin C.',hi:'हीमोग्लोबिन जाँच माँगें। निर्धारित आयरन और फोलिक एसिड लें। विटामिन C के साथ आयरन युक्त भोजन खाएँ।',bn:'হিমোগ্লোবিন পরীক্ষা চান। নির্ধারিত আয়রন ও ফলিক অ্যাসিড নিন। ভিটামিন C-এর সাথে আয়রন-rich খাবার খান।'},
+    more:{en:'Severe anaemia raises risk of preterm birth and low birth weight.',hi:'गंभीर एनीमिया से समय से पहले जन्म और कम वज़न का खतरा बढ़ता है।',bn:'তীব্র রক্তাল্পতা সময়ের আগে জন্ম ও কম ওজনের ঝুঁকি বাড়ায়।'} },
+  { name:{en:'Hyperemesis gravidarum',hi:'हाइपरएमेसिस ग्रेविडेरम',bn:'হাইপারেমেসিস গ্র্যাভিডারাম'},
+    signs:{en:'Cannot keep any food or water down, weight loss, dizziness, very dark urine.',hi:'कुछ भी खाना-पीना न रुकना, वज़न घटना, चक्कर, बहुत गहरा पेशाब।',bn:'কিছুই ধরে রাখতে না পারা, ওজন কমা, মাথা ঘোরা, খুব গাঢ় প্রস্রাব।'},
+    do:{en:'See a doctor the same day. You may need IV fluids. Small frequent sips and bland food may help.',hi:'उसी दिन डॉक्टर से मिलें। IV फ़्लूइड चाहिए हो सकता है। थोड़ा-थोड़ा पानी और ब्लैंड खाना।',bn:'একই দিনে ডাক্তার দেখান। IV ফ্লুইড লাগতে পারে। অল্প অল্প পানি ও হালকা খাবার।'},
+    more:{en:'Not just “morning sickness” — it is a medical condition.',hi:'यह सिर्फ “morning sickness” नहीं — एक चिकित्सा स्थिति है।',bn:'এটি শুধু “morning sickness” নয় — একটি চিকিৎসা অবস্থা।'} },
+  { name:{en:'Ectopic pregnancy',hi:'एक्टोपिक गर्भावस्था',bn:'এক্টোপিক গর্ভাবস্থা'},
+    signs:{en:'Sharp one-sided abdominal pain, vaginal bleeding, shoulder pain, dizziness or fainting in early pregnancy.',hi:'गर्भावस्था की शुरुआत में तेज़ एक तरफ़ा पेट दर्द, योनि से रक्तस्राव, कंधे में दर्द, चक्कर या बेहोशी।',bn:'গর্ভাবস্থার শুরুতে তীব্র একপাশের পেটে ব্যথা, যোনি থেকে রক্তপাত, কাঁধে ব্যথা, মাথা ঘোরা বা অজ্ঞান।'},
+    do:{en:'This is an emergency. Go to hospital immediately or call 102.',hi:'यह आपातकाल है। तुरंत अस्पताल जाएँ या 102 पर कॉल करें।',bn:'এটি জরুরি। সাথে সাথে হাসপাতালে যান বা 102-এ কল করুন।'},
+    more:{en:'An egg implanted outside the uterus — needs urgent treatment.',hi:'गर्भाशय के बाहर अंडा लगना — तत्काल इलाज ज़रूरी।',bn:'জরায়ুর বাইরে ডিম্ব স্থাপন — তাৎক্ষণিক চিকিৎসা প্রয়োজন।'} },
+  { name:{en:'Placenta previa',hi:'प्लेसेंटा प्रिविया',bn:'প্লাসেন্টা প্রিভিয়া'},
+    signs:{en:'Painless bright-red bleeding in the second or third trimester.',hi:'दूसरी या तीसरी तिमाही में दर्द रहित चमकीला लाल रक्तस्राव।',bn:'দ্বিতীয় বা তৃতীয় ত্রৈমাসিকে ব্যথাহীন উজ্জ্বল লাল রক্তপাত।'},
+    do:{en:'Any bleeding in late pregnancy needs same-day hospital assessment.',hi:'गर्भावस्था के अंत में कोई भी रक्तस्राव उसी दिन अस्पताल जाँच चाहता है।',bn:'গর্ভাবস্থার শেষে যেকোনো রক্তপাত একই দিনে হাসপাতালে পরীক্ষা দরকার।'},
+    more:{en:'Placenta covers the cervix; delivery is usually by caesarean.',hi:'प्लेसेंटा गर्भाशय ग्रीवा ढकता है; प्रसव आमतौर पर सिज़ेरियन से।',bn:'প্লাসেন্টা জরায়ুমুখ ঢেকে রাখে; প্রসব সাধারণত সিজারিয়ানে।'} },
+  { name:{en:'Preterm labour',hi:'समय से पहले प्रसव',bn:'সময়ের আগে প্রসব'},
+    signs:{en:'Regular contractions before 37 weeks, lower back ache, pelvic pressure, fluid leak, bleeding.',hi:'37 सप्ताह से पहले नियमित संकुचन, कमर में दर्द, पेल्विक दबाव, पानी निकलना, रक्तस्राव।',bn:'৩৭ সপ্তাহের আগে নিয়মিত সংকোচন, কোমরে ব্যথা, পেলভিক চাপ, পানি ঝরা, রক্তপাত।'},
+    do:{en:'Go to hospital. Lie on your left side and time the contractions.',hi:'अस्पताल जाएँ। बाएँ करवट लेटें और संकुचन का समय नोट करें।',bn:'হাসপাতালে যান। বাম পাশে শুয়ে সংকোচনের সময় নিন।'},
+    more:{en:'Early care can delay birth and help the baby’s lungs mature.',hi:'जल्दी इलाज से प्रसव टल सकता है और शिशु के फेफड़े परिपक्व हो सकते हैं।',bn:'দ্রুত চিকিৎসায় প্রসব বিলম্বিত হতে পারে ও শিশুর ফুসফুস পরিপক্ক হতে পারে।'} },
+  { name:{en:'Postpartum haemorrhage',hi:'प्रसवोत्तर रक्तस्राव',bn:'প্রসব-পরবর্তী রক্তপাত'},
+    signs:{en:'Heavy bleeding after birth — soaking a pad in an hour, large clots, dizziness, fainting.',hi:'प्रसव के बाद भारी रक्तस्राव — एक घंटे में पैड भरना, बड़े थक्के, चक्कर, बेहोशी।',bn:'প্রসবের পর ভারী রক্তপাত — এক ঘণ্টায় প্যাড ভিজে যাওয়া, বড় থক্কা, মাথা ঘোরা, অজ্ঞান।'},
+    do:{en:'Call for help immediately. Massage the lower abdomen firmly and keep breastfeeding.',hi:'तुरंत मदद बुलाएँ। निचला पेट मज़बूती से मालिश करें और स्तनपान जारी रखें।',bn:'সাথে সাথে সাহায্য ডাকুন। নিচের পেট শক্তভাবে ম্যাসাজ করুন ও স্তন্যপান চালিয়ে যান।'},
+    more:{en:'Most deaths are preventable with quick action.',hi:'जल्दी कार्रवाई से अधिकांश मौतें रोकी जा सकती हैं।',bn:'দ্রুত পদক্ষেপে বেশিরভাগ মৃত্যু প্রতিরোধ করা যায়।'} }
+];
+
+function renderComplications(){
+  const el = $('#compList'); if(!el) return;
+  el.innerHTML = COMPLICATIONS.map(c => `
+    <details class="comp">
+      <summary>${esc(c.name[state.lang]||c.name.en)}</summary>
+      <div class="body">
+        <span class="tag2">${esc(tr('comp_signs'))}</span>
+        <p>${esc(c.signs[state.lang]||c.signs.en)}</p>
+        <span class="tag2" style="background:var(--mint);color:var(--mint-ink)">${esc(tr('comp_do'))}</span>
+        <p>${esc(c.do[state.lang]||c.do.en)}</p>
+        <p style="font-size:11.5px;color:var(--mut);margin-top:6px"><b>${esc(tr('comp_more'))}:</b> ${esc(c.more[state.lang]||c.more.en)}</p>
+      </div>
+    </details>`).join('');
+}
 /* ---------------- MORE ---------------- */
 function renderMore() {
   const w = dueWeek();
@@ -961,6 +1017,160 @@ if ('serviceWorker' in navigator) {
 if (typeof caches !== 'undefined') {
   caches.keys().then(ks => Promise.all(ks.map(k => caches.delete(k)))).catch(() => { });
 }
+
+/* ---------------- AI AGENT (Gemini) ---------------- */
+const DEFAULT_GEMINI_KEY = '';
+const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash'];
+let agentHistory = [];
+let agentBusy = false;
+
+function geminiKey() { return (localStorage.getItem('mc_gemini_key') || DEFAULT_GEMINI_KEY).trim(); }
+function setGeminiKey(k) { if (k) localStorage.setItem('mc_gemini_key', k.trim()); else localStorage.removeItem('mc_gemini_key'); }
+
+const AGENT_SYSTEM = `You are Maternacare AI, a warm, calm assistant for pregnant people, new mothers and families.
+Rules:
+- You give health EDUCATION only. Never diagnose. Never prescribe medicines or doses.
+- Always answer in the user's language (English, Hindi or Bengali) based on how they write.
+- Keep answers short, kind and practical (bullet points when useful).
+- For any danger sign (bleeding, severe headache/vision changes, fits, chest pain, breathing trouble, reduced baby movement, fluid leak, high fever, severe vomiting, fainting, thoughts of self-harm, baby not feeding/breathing fast/blue) tell them to seek emergency care NOW and call 102 (India) or go to the nearest hospital. Do not reassure.
+- Encourage regular antenatal visits and following their own doctor.
+- End with a gentle reminder that you are not a doctor.
+- If asked something unrelated to pregnancy/child health, politely steer back.`;
+
+function openAgent() {
+  $('#agentOverlay').classList.add('on');
+  document.body.style.overflow = 'hidden';
+  renderAgentChat();
+  renderAgentChips();
+  setTimeout(() => { try { $('#agentInput').focus(); } catch (e) { } }, 200);
+}
+function closeAgent() {
+  $('#agentOverlay').classList.remove('on');
+  document.body.style.overflow = '';
+}
+
+function renderAgentChat() {
+  const log = $('#agentLog');
+  if (!agentHistory.length) {
+    agentHistory.push({ role: 'model', text: `Hello ${state.name || 'Mama'} 👋 I'm your AI assistant. Ask me anything about pregnancy, baby care, food, or traditions.` });
+  }
+  log.innerHTML = agentHistory.map(m => {
+    const isUser = m.role === 'user';
+    return `<div class="msg ${isUser ? 'me' : 'ai'}">${isUser ? esc(m.text) : (m.html || esc(m.text))}</div>`;
+  }).join('');
+  requestAnimationFrame(() => { try { log.scrollTop = log.scrollHeight; } catch (e) { } });
+}
+
+async function agentSend(text) {
+  text = (text || '').trim();
+  if (!text || agentBusy) return;
+  const t = triage(text);
+  if (t.level === 'er') { agentHistory.push({ role: 'user', text }); agentHistory.push({ role: 'model', html: emergencyHTML(t.hits) }); renderAgentChat(); return; }
+  if (t.level === 'ur') { agentHistory.push({ role: 'user', text }); agentHistory.push({ role: 'model', html: urgentHTML(t.hits) }); renderAgentChat(); return; }
+
+  agentHistory.push({ role: 'user', text });
+  renderAgentChat();
+  const log = $('#agentLog');
+  const typing = document.createElement('div');
+  typing.className = 'typing'; typing.innerHTML = '<i></i><i></i><i></i>';
+  log.appendChild(typing);
+  try { log.scrollTop = log.scrollHeight; } catch (e) { }
+
+  const key = geminiKey();
+  if (!key) {
+    typing.remove();
+    agentHistory.push({ role: 'model', text: tr('agent_no_key') });
+    renderAgentChat();
+    return;
+  }
+
+  agentBusy = true;
+  const btn = $('#agentSend'); if (btn) btn.disabled = true;
+  const recent = agentHistory.filter(m => m.role === 'user' || m.role === 'model').slice(-10);
+  const contents = recent.map(m => ({
+    role: m.role === 'user' ? 'user' : 'model',
+    parts: [{ text: m.text || (m.html ? m.html.replace(/<[^>]+>/g, ' ') : '') }]
+  }));
+
+  let lastErr = '';
+  let ok = false;
+  for (const model of GEMINI_MODELS) {
+    if (ok) break;
+    for (let attempt = 0; attempt < 2 && !ok; attempt++) {
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: AGENT_SYSTEM }] },
+            contents,
+            generationConfig: { temperature: 0.5, maxOutputTokens: 700 }
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          lastErr = (data && data.error && data.error.message) || ('HTTP ' + res.status);
+          if (res.status === 503 && attempt === 0) { await new Promise(r => setTimeout(r, 1000)); continue; }
+          break;
+        }
+        const txt = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) || '';
+        if (txt) {
+          typing.remove();
+          agentHistory.push({ role: 'model', html: esc(txt).replace(/\n/g, '<br/>') });
+          ok = true;
+        } else {
+          lastErr = 'Empty response';
+          break;
+        }
+      } catch (e) {
+        lastErr = e.message || 'network error';
+        if (attempt === 0) { await new Promise(r => setTimeout(r, 1000)); continue; }
+        break;
+      }
+    }
+  }
+  if (!ok) {
+    typing.remove();
+    agentHistory.push({ role: 'model', text: tr('agent_error') + (lastErr ? ' (' + lastErr + ')' : '') });
+  }
+  agentBusy = false;
+  if (btn) btn.disabled = false;
+  renderAgentChat();
+  buzz(ok ? 20 : 60);
+}
+
+const AGENT_CHIPS = {
+  en: ['Is this normal?', 'Iron-rich foods', 'Baby not moving', 'Vaccine schedule', 'Tradition vs evidence'],
+  hi: ['Kya yeh normal hai?', 'Iron-rich foods', 'Baby nahi hil raha', 'Tika schedule', 'Parampara vs evidence'],
+  bn: ['Eta ki normal?', 'Iron-rich foods', 'Baby nachchhe na', 'Tika schedule', 'Parampara vs evidence']
+};
+function renderAgentChips() {
+  const el = $('#agentChips'); if (!el) return;
+  el.innerHTML = (AGENT_CHIPS[state.lang] || AGENT_CHIPS.en).map(c => `<button class="chip">${esc(c)}</button>`).join('');
+}
+// Gemini key settings
+function refreshGemKeyUI() {
+  const el = $('#gemKey'); if (!el) return;
+  el.value = localStorage.getItem('mc_gemini_key') || '';
+  const st = $('#gemStatus'); if (st) st.textContent = geminiKey() ? 'Key active' : 'No key set';
+}
+$('#gemSave') && $('#gemSave').addEventListener('click', () => { setGeminiKey($('#gemKey').value); refreshGemKeyUI(); toast(tr('toast_saved')); });
+$('#gemClear') && $('#gemClear').addEventListener('click', () => { setGeminiKey(''); refreshGemKeyUI(); toast(tr('toast_reset')); });
+
+// Floating agent
+$('#fabAgent') && $('#fabAgent').addEventListener('click', openAgent);
+$('#agentClose') && $('#agentClose').addEventListener('click', closeAgent);
+$('#agentSend') && $('#agentSend').addEventListener('click', () => { const el = $('#agentInput'); agentSend(el.value); el.value = ''; el.style.height = 'auto'; });
+$('#agentInput') && $('#agentInput').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#agentSend').click(); } });
+$('#agentInput') && $('#agentInput').addEventListener('input', e => { e.target.style.height = 'auto'; e.target.style.height = Math.min(110, e.target.scrollHeight) + 'px'; });
+document.addEventListener('click', e => {
+  const chip = e.target.closest('#agentChips .chip');
+  if (chip) { agentSend(chip.textContent); }
+});
+
+// patch renderMore to refresh gem key ui
+const _renderMore = renderMore;
+renderMore = function() { _renderMore(); refreshGemKeyUI(); };
 
 applyLang();
 go('home');

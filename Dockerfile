@@ -4,7 +4,7 @@ WORKDIR /app
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ ./backend/
-COPY frontend/ ./frontend/
+COPY docs/ ./docs/
 ENV DATABASE_PATH=/app/data/maternacare.db
 RUN mkdir -p /app/data
 WORKDIR /app/backend
