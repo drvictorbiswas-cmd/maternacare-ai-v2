@@ -51,7 +51,7 @@ const T = {
     chart: 'Recent weight', not_set: 'Not set', you: 'You', assistant: 'Maternacare',
     due: 'Due', baby: 'Baby', nav_home: 'Home', nav_baby: 'Baby', nav_ask: 'Ask', nav_learn: 'Learn', nav_more: 'More',
     welcome_title: 'Welcome 🌸', welcome_sub: 'A few details so the guidance fits you. Everything stays on this device.', start: 'Start',
-    agent_title:'Maternacare AI',agent_sub:'Answers your questions · educational only',agent_ph:'Ask anything about pregnancy or baby care…',agent_note:'Educational only. Not a diagnosis. In an emergency call 102.',agent_key:'AI assistant key',agent_key_hint:'Stored only on this device. Anyone with access to this browser can read it.',agent_thinking:'Thinking…',agent_error:'Sorry, I could not reach the AI right now. Try again in a moment.',agent_no_key:'Paste your free Gemini API key in More → AI assistant key to enable me.',agent_clear:'Clear chat',
+    agent_title:'Maternacare AI',agent_sub:'Answers your questions · educational only',agent_ph:'Ask anything about pregnancy or baby care…',agent_note:'Educational only. Not a diagnosis. In an emergency call 102.',agent_key:'AI assistant key',agent_key_hint:'Stored only on this device. Anyone with access to this browser can read it.',agent_thinking:'Thinking…',agent_error:'Sorry, I could not reach the AI right now. Try again in a moment.',agent_no_key:'Paste your free API key (Groq recommended) in More → AI assistant key to enable me.',agent_clear:'Clear chat',
     complications:'Complications reference',complications_sub:'Common pregnancy complications, their warning signs and what to do. Educational only.',comp_signs:'Warning signs',comp_do:'What to do',comp_more:'Learn more'
   },
   hi: {
@@ -97,7 +97,7 @@ const T = {
     chart: 'हाल का वज़न', not_set: 'सेट नहीं', you: 'आप', assistant: 'Maternacare',
     due: 'देय', baby: 'शिशु', nav_home: 'होम', nav_baby: 'शिशु', nav_ask: 'पूछें', nav_learn: 'जानें', nav_more: 'और',
     welcome_title: 'स्वागत है 🌸', welcome_sub: 'कुछ जानकारी ताकि सलाह आपके अनुसार हो। सब कुछ इसी डिवाइस पर रहता है।', start: 'शुरू करें',
-    agent_title:'Maternacare AI',agent_sub:'Aapke sawalon ke jawab · sirf shiksha',agent_ph:'Garbhavastha ya shishu dekhbhal ke baare mein kuch bhi puchhein…',agent_note:'Sirf shiksha. Nidan nahi. Aapatakal mein 102 par call karein.',agent_key:'AI assistant key',agent_key_hint:'Sirf is device par. Is browser ko access karne wala koi bhi padh sakta hai.',agent_thinking:'Soch rahi hoon…',agent_error:'Maaf kijiye, abhi AI se sampark nahi ho paya. Thodi der baad try karein.',agent_no_key:'Mujhe enable karne ke liye More → AI assistant key mein apna free Gemini API key paste karein.',agent_clear:'Chat saaf karein',
+    agent_title:'Maternacare AI',agent_sub:'Aapke sawalon ke jawab · sirf shiksha',agent_ph:'Garbhavastha ya shishu dekhbhal ke baare mein kuch bhi puchhein…',agent_note:'Sirf shiksha. Nidan nahi. Aapatakal mein 102 par call karein.',agent_key:'AI assistant key',agent_key_hint:'Sirf is device par. Is browser ko access karne wala koi bhi padh sakta hai.',agent_thinking:'Soch rahi hoon…',agent_error:'Maaf kijiye, abhi AI se sampark nahi ho paya. Thodi der baad try karein.',agent_no_key:'Mujhe enable karne ke liye More → AI assistant key mein apna free API key (Groq recommended) paste karein.',agent_clear:'Chat saaf karein',
     complications:'Complications reference',complications_sub:'Aam garbhavastha complications, unke warning signs aur kya karein. Sirf shiksha.',comp_signs:'Warning signs',comp_do:'Kya karein',comp_more:'Aur jaanein'
   },
   bn: {
@@ -143,7 +143,7 @@ const T = {
     chart: 'সাম্প্রতিক ওজন', not_set: 'সেট নয়', you: 'আপনি', assistant: 'Maternacare',
     due: 'দেয়', baby: 'শিশু', nav_home: 'হোম', nav_baby: 'শিশু', nav_ask: 'জিজ্ঞাসা', nav_learn: 'জানুন', nav_more: 'আরও',
     welcome_title: 'স্বাগতম 🌸', welcome_sub: 'কিছু তথ্য যাতে পরামর্শ আপনার জন্য মানানসই হয়। সবকিছু এই ডিভাইসেই থাকে।', start: 'শুরু করুন',
-    agent_title:'Maternacare AI',agent_sub:'আপনার প্রশ্নের উত্তর · শুধু শিক্ষামূলক',agent_ph:'গর্ভাবস্থা বা শিশুর যত্ন সম্পর্কে যেকোনো কিছু জিজ্ঞাসা করুন…',agent_note:'শুধু শিক্ষামূলক। রোগ নির্ণয় নয়। জরুরিতে 102-এ কল করুন।',agent_key:'AI assistant key',agent_key_hint:'শুধু এই ডিভাইসে। এই ব্রাউজারে প্রবেশ করতে পারে এমন যে কেউ পড়তে পারে।',agent_thinking:'ভাবছি…',agent_error:'দুঃখিত, এই মুহূর্তে AI-এ পৌঁছানো যায়নি। একটু পরে চেষ্টা করুন।',agent_no_key:'Amake chalu korte More → AI assistant key-e apnar free Gemini API key paste korun.',agent_clear:'চ্যাট মুছুন',
+    agent_title:'Maternacare AI',agent_sub:'আপনার প্রশ্নের উত্তর · শুধু শিক্ষামূলক',agent_ph:'গর্ভাবস্থা বা শিশুর যত্ন সম্পর্কে যেকোনো কিছু জিজ্ঞাসা করুন…',agent_note:'শুধু শিক্ষামূলক। রোগ নির্ণয় নয়। জরুরিতে 102-এ কল করুন।',agent_key:'AI assistant key',agent_key_hint:'শুধু এই ডিভাইসে। এই ব্রাউজারে প্রবেশ করতে পারে এমন যে কেউ পড়তে পারে।',agent_thinking:'ভাবছি…',agent_error:'দুঃখিত, এই মুহূর্তে AI-এ পৌঁছানো যায়নি। একটু পরে চেষ্টা করুন।',agent_no_key:'Amake chalu korte More → AI assistant key-e apnar free API key (Groq recommended) paste korun.',agent_clear:'চ্যাট মুছুন',
     complications:'জটিলতার রেফারেন্স',complications_sub:'সাধারণ গর্ভাবস্থার জটিলতা, সতর্কতা চিহ্ন ও কী করবেন। শুধু শিক্ষামূলক।',comp_signs:'সতর্কতা চিহ্ন',comp_do:'কী করবেন',comp_more:'আরও জানুন'
   }
 };
@@ -1024,10 +1024,10 @@ const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash
 let agentHistory = [];
 let agentBusy = false;
 
-function aiProvider() { try { return localStorage.getItem('mc_ai_provider') || 'gemini'; } catch (e) { return 'gemini'; } }
+function aiProvider() { try { return localStorage.getItem('mc_ai_provider') || 'openai'; } catch (e) { return 'openai'; } }
 function aiKey() { try { return (localStorage.getItem('mc_ai_key') || localStorage.getItem('mc_gemini_key') || DEFAULT_GEMINI_KEY || '').trim(); } catch (e) { return ''; } }
 function aiEndpoint() { try { return localStorage.getItem('mc_ai_endpoint') || 'https://api.groq.com/openai/v1/chat/completions'; } catch (e) { return 'https://api.groq.com/openai/v1/chat/completions'; } }
-function aiModel() { try { return localStorage.getItem('mc_ai_model') || 'llama-3.3-70b-versatile'; } catch (e) { return 'llama-3.3-70b-versatile'; } }
+function aiModel() { try { return localStorage.getItem('mc_ai_model') || 'qwen/qwen3.8-27b'; } catch (e) { return 'qwen/qwen3.8-27b'; } }
 function setAIConfig(p, k, e, m) {
   try {
     if (p) localStorage.setItem('mc_ai_provider', p);
