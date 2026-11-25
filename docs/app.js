@@ -1026,7 +1026,13 @@ let agentBusy = false;
 
 function aiProvider() { try { return localStorage.getItem('mc_ai_provider') || 'openai'; } catch (e) { return 'openai'; } }
 function aiKey() { try { return (localStorage.getItem('mc_ai_key') || localStorage.getItem('mc_gemini_key') || DEFAULT_GEMINI_KEY || '').trim(); } catch (e) { return ''; } }
-function aiEndpoint() { try { return localStorage.getItem('mc_ai_endpoint') || 'https://api.groq.com/openai/v1/chat/completions'; } catch (e) { return 'https://api.groq.com/openai/v1/chat/completions'; } }
+function aiEndpoint() {
+  try {
+    const v = (localStorage.getItem('mc_ai_endpoint') || '').trim();
+    if (!v || !/^https:\/\//.test(v) || !/chat\/completions/.test(v)) return 'https://api.groq.com/openai/v1/chat/completions';
+    return v;
+  } catch (e) { return 'https://api.groq.com/openai/v1/chat/completions'; }
+}
 function aiModel() { try { return localStorage.getItem('mc_ai_model') || 'qwen/qwen3.8-27b'; } catch (e) { return 'qwen/qwen3.8-27b'; } }
 function setAIConfig(p, k, e, m) {
   try {
@@ -1166,6 +1172,11 @@ async function agentSend(text) {
           max_tokens: 700
         })
       });
+      const ct = res.headers.get('content-type') || '';
+      if (!ct.includes('json')) {
+        const body = (await res.text()).slice(0, 120);
+        throw new Error('Endpoint ' + aiEndpoint() + ' returned ' + ct + ' (HTTP ' + res.status + '): ' + body);
+      }
       const data = await res.json();
       if (!res.ok) {
         lastErr = (data && data.error && (data.error.message || data.error)) || ('HTTP ' + res.status);
@@ -1214,8 +1225,8 @@ function renderAgentChips() {
 // Gemini key settings
 function refreshGemKeyUI() {
   const prov = $('#aiProvider'); if (prov) prov.value = aiProvider();
-  const ep = $('#aiEndpoint'); if (ep) ep.value = localStorage.getItem('mc_ai_endpoint') || '';
-  const md = $('#aiModel'); if (md) md.value = localStorage.getItem('mc_ai_model') || '';
+  const ep = $('#aiEndpoint'); if (ep) ep.value = localStorage.getItem('mc_ai_endpoint') || 'https://api.groq.com/openai/v1/chat/completions';
+  const md = $('#aiModel'); if (md) md.value = localStorage.getItem('mc_ai_model') || 'qwen/qwen3.8-27b';
   const el = $('#gemKey'); if (el) el.value = localStorage.getItem('mc_ai_key') || localStorage.getItem('mc_gemini_key') || '';
   const st = $('#gemStatus'); if (st) st.textContent = aiKey() ? 'Key active (' + aiProvider() + ')' : 'No key set';
   const of = $('#openaiFields'); if (of) of.style.display = aiProvider() === 'openai' ? '' : 'none';
@@ -1233,6 +1244,11 @@ $('#gemSave') && $('#gemSave').addEventListener('click', () => {
   toast(tr('toast_saved'));
 });
 $('#gemClear') && $('#gemClear').addEventListener('click', () => { setGeminiKey(''); refreshGemKeyUI(); toast(tr('toast_reset')); });
+$('#gemShow') && $('#gemShow').addEventListener('click', () => {
+  const el = $('#gemKey'); if (!el) return;
+  if (el.type === 'password') { el.type = 'text'; $('#gemShow').textContent = 'Hide key'; }
+  else { el.type = 'password'; $('#gemShow').textContent = 'Show key'; }
+});
 
 async function testAIKey() {
   const key = aiKey();
