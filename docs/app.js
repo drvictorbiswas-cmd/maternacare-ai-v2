@@ -1024,8 +1024,8 @@ const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash
 let agentHistory = [];
 let agentBusy = false;
 
-function geminiKey() { return (localStorage.getItem('mc_gemini_key') || DEFAULT_GEMINI_KEY).trim(); }
-function setGeminiKey(k) { if (k) localStorage.setItem('mc_gemini_key', k.trim()); else localStorage.removeItem('mc_gemini_key'); }
+function geminiKey() { try { return (localStorage.getItem('mc_gemini_key') || DEFAULT_GEMINI_KEY).trim(); } catch (e) { return DEFAULT_GEMINI_KEY; } }
+function setGeminiKey(k) { try { if (k) localStorage.setItem('mc_gemini_key', k.trim()); else localStorage.removeItem('mc_gemini_key'); return true; } catch (e) { toast('Could not save key: ' + e.message); return false; } }
 
 const AGENT_SYSTEM = `You are Maternacare AI, a warm, calm assistant for pregnant people, new mothers and families.
 Rules:
@@ -1158,6 +1158,31 @@ function refreshGemKeyUI() {
 }
 $('#gemSave') && $('#gemSave').addEventListener('click', () => { setGeminiKey($('#gemKey').value); refreshGemKeyUI(); toast(tr('toast_saved')); });
 $('#gemClear') && $('#gemClear').addEventListener('click', () => { setGeminiKey(''); refreshGemKeyUI(); toast(tr('toast_reset')); });
+
+async function testGeminiKey() {
+  const key = (geminiKey() || '').trim();
+  const st = $('#gemStatus');
+  if (!key) { if (st) st.textContent = 'No key to test'; return; }
+  if (st) st.textContent = 'Testing…';
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(key)}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Reply with exactly: OK' }] }], generationConfig: { maxOutputTokens: 8 } })
+    });
+    const data = await res.json();
+    if (res.ok && data.candidates && data.candidates[0]) {
+      if (st) st.textContent = '✓ Key works!';
+      toast('Key works!');
+    } else {
+      if (st) st.textContent = '✗ ' + ((data.error && data.error.message) || ('HTTP ' + res.status)).slice(0, 60);
+      toast('Key test failed');
+    }
+  } catch (e) {
+    if (st) st.textContent = '✗ Network error';
+    toast('Network error');
+  }
+}
+$('#gemTest') && $('#gemTest').addEventListener('click', testGeminiKey);
 
 // Floating agent
 $('#fabAgent') && $('#fabAgent').addEventListener('click', openAgent);
