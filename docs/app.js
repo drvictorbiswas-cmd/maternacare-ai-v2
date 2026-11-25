@@ -1079,8 +1079,9 @@ async function agentSend(text) {
   const key = geminiKey();
   if (!key) {
     typing.remove();
-    agentHistory.push({ role: 'model', text: tr('agent_no_key') });
+    agentHistory.push({ role: 'model', html: `${esc(tr('agent_no_key'))}<br><br><button class="btn soft sm" id="agentGoSettings">⚙ Open settings</button>` });
     renderAgentChat();
+    setTimeout(() => { const b = $('#agentGoSettings'); if (b) b.addEventListener('click', () => { closeAgent(); go('more'); }); }, 50);
     return;
   }
 
@@ -1104,6 +1105,7 @@ async function agentSend(text) {
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: AGENT_SYSTEM }] },
             contents,
+            tools: [{ google_search: {} }],
             generationConfig: { temperature: 0.5, maxOutputTokens: 700 }
           })
         });
@@ -1175,4 +1177,7 @@ renderMore = function() { _renderMore(); refreshGemKeyUI(); };
 applyLang();
 go('home');
 if (!state.onboarded) setTimeout(() => { try { openSheet('profile'); } catch (e) { } }, 450);
+if (!localStorage.getItem('mc_agent_hint_shown')) {
+  setTimeout(() => { toast('Tap the pink ✦ button to ask the AI anything'); localStorage.setItem('mc_agent_hint_shown', '1'); }, 1400);
+}
 setInterval(() => { if (state.tracker && state.tracker.date !== todayISO()) renderTracker(); }, 60000);
