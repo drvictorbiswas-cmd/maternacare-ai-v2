@@ -19,7 +19,7 @@ RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
 RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '')
 RAZORPAY_WEBHOOK_SECRET = os.environ.get('RAZORPAY_WEBHOOK_SECRET', '')
 DATABASE_PATH = Path(os.environ.get('DATABASE_PATH', str(BASE / 'data' / 'maternacare.db')))
-FRONTEND = BASE.parent / 'frontend'
+FRONTEND = BASE.parent / 'docs'
 ALLOWED_ORIGINS = [o.strip() for o in os.environ.get('ALLOWED_ORIGINS', '').split(',') if o.strip()]
 if PRODUCTION and not ALLOWED_ORIGINS:
     raise RuntimeError('ALLOWED_ORIGINS must be set in production')
