@@ -1,4 +1,6 @@
-# Maternacare AI — Hardened full-stack app (Phase 0 + 1)
+# Maternacare AI
+
+Live app: https://drvictorbiswas-cmd.github.io/maternacare-ai-v2/ — Hardened full-stack app (Phase 0 + 1)
 
 FastAPI + SQLite/Postgres-ready backend, animated PWA frontend, JWT auth, real Razorpay
 verification, server-side entitlement, audit log, mother/baby/family records, and versioned
