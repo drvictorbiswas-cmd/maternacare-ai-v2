@@ -1,10 +1,19 @@
-const CACHE='maternacare-full-v4';
-const ASSETS=['./','./index.html','./style.css','./engine.js','./app.js','./manifest.json','./icon.svg'];
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
-self.addEventListener('fetch',e=>{
-  const url=new URL(e.request.url);
-  if(url.pathname.startsWith('/api/')) return; // never cache API
-  if(e.request.method!=='GET') return;
-  e.respondWith(caches.match(e.request).then(c=>c||fetch(e.request).then(res=>{const cp=res.clone();caches.open(CACHE).then(cc=>cc.put(e.request,cp));return res;}).catch(()=>caches.match('./index.html'))));
+/* One-time self-destruct worker.
+   Older builds of this app cached index.html/app.js forever (cache-first),
+   which served a stale, broken interface. This new worker clears every cache,
+   unregisters itself, and reloads open tabs so the browser always gets fresh code. */
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    try {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    } catch (e) { }
+    try {
+      const clients = await self.clients.matchAll({ type: 'window' });
+      clients.forEach(c => { try { c.navigate(c.url); } catch (e) { } });
+    } catch (e) { }
+    try { await self.registration.unregister(); } catch (e) { }
+  })());
 });
+self.addEventListener('fetch', () => { });

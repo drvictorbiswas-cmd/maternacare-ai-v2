@@ -3,233 +3,250 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="theme-color" content="#0d5c63"/>
-<meta name="description" content="Maternacare AI — maternal & child health companion"/>
+<meta name="theme-color" content="#FFF9FB"/>
+<meta name="description" content="Maternacare AI — calm, evidence-based guidance from pregnancy to baby's first years."/>
 <title>Maternacare AI</title>
 <link rel="manifest" href="manifest.json"/>
 <link rel="icon" href="icon.svg" type="image/svg+xml"/>
 <link rel="apple-touch-icon" href="icon.svg"/>
-<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="style.css?v=11"/>
 </head>
 <body>
-<div class="disclaimer" id="disclaimer"><span class="di">i</span><p id="disclaimerText"></p><button id="disclaimerClose" aria-label="Dismiss notice">×</button></div>
+<div class="shell">
 
-<header class="header">
-  <div class="hdr"><a class="brand" href="#" data-tab="home"><span class="bi">✚</span><b data-i18n="app_name">Maternacare AI</b></a>
-    <div class="hdr-r"><button class="ib" id="accountBtn" title="Account">👤</button>
-      <select id="lang" class="lang"><option value="en">English</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option></select></div>
-  </div>
-  <nav class="tabs" id="tabs">
-    <button class="tab active" data-tab="home"><span>⌂</span><i data-i18n="nav_home">Home</i></button>
-    <button class="tab" data-tab="learn"><span>✦</span><i data-i18n="nav_learn">Learn</i></button>
-    <button class="tab" data-tab="trad"><span>⚖</span><i data-i18n="nav_traditional">Traditions</i></button>
-    <button class="tab" data-tab="safety"><span>!</span><i data-i18n="nav_safety">Safety</i></button>
-    <button class="tab" data-tab="calendar"><span>▦</span><i data-i18n="nav_calendar">Calendar</i></button>
-    <button class="tab" data-tab="baby"><span>♡</span><i data-i18n="nav_baby">Baby</i></button>
-    <button class="tab" data-tab="chat"><span>◌</span><i data-i18n="nav_chat">Ask</i></button>
-    <button class="tab" data-tab="sub"><span>✧</span><i data-i18n="manage_sub">Subscription</i></button>
+  <header class="header">
+    <div class="hdr">
+      <a class="brand" href="#" data-go="home"><span class="brand-mark">+</span> Maternacare <span style="font-weight:600;color:var(--mut);font-size:13px">AI</span></a>
+      <div class="pills" role="group" aria-label="Language">
+        <button class="pill active" data-lang="en">EN</button>
+        <button class="pill" data-lang="hi">हिन्दी</button>
+        <button class="pill" data-lang="bn">বাংলা</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ================= HOME ================= -->
+    <section class="screen on" id="s-home">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div>
+          <p class="muted" style="font-size:12.5px" id="greetLine">Good morning</p>
+          <h1 class="page-title" id="greetName">Hello, Mama</h1>
+        </div>
+        <button class="btn ghost sm" data-sheet="profile" data-i18n="edit">Edit</button>
+      </div>
+
+      <div class="hero" id="homeHero"></div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2 data-i18n="daily_tracker">Daily tracker</h2>
+          <span style="font-size:11px;color:var(--mut)" id="trackDate"></span>
+        </div>
+        <div class="track-grid" id="trackGrid"></div>
+        <p class="save-note" id="trackNote">Saved on this device</p>
+      </div>
+
+      <div class="card">
+        <div class="section-head"><h2 data-i18n="quick_safety">Quick safety check</h2><span class="tag soon">Triage</span></div>
+        <p class="subtitle" style="font-size:12.5px" data-i18n="quick_desc">Tell me a symptom — I'll say how urgent it may be and what to do.</p>
+        <div class="row" style="margin-top:10px">
+          <input class="inp" id="quickSymptom" placeholder="e.g. severe headache and blurred vision" data-ph="symptom_ph" aria-label="Symptom"/>
+          <button class="btn primary" id="quickCheck" data-i18n="check" style="flex:0 0 auto">Check</button>
+        </div>
+        <div id="quickResult" style="margin-top:12px"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head"><h2 data-i18n="up_next">Up next</h2><button class="link-btn" data-go="more" data-i18n="calendar">Calendar</button></div>
+        <div class="list" id="homeTasks"></div>
+        <div class="divider"></div>
+        <div class="risk-note mint" data-i18n="remember">
+          <b>Remember:</b> this app is health education, not a doctor. For anything urgent, seek care immediately.
+        </div>
+        <button class="btn soft full" data-go="safety" style="margin-top:12px" data-i18n="safety_title">Safety</button>
+      </div>
+    </section>
+
+    <!-- ================= BABY ================= -->
+    <section class="screen" id="s-baby">
+      <div class="hero" id="babyHero"></div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2 data-i18n="baby_profile">Baby profile</h2>
+          <button class="link-btn" data-sheet="baby" data-i18n="add_edit">+ Add / edit</button>
+        </div>
+        <div id="babyProfile"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head"><h2 data-i18n="growth">Growth</h2><button class="link-btn" data-sheet="growth" data-i18n="log">+ Log</button></div>
+        <div id="growthBody"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head"><h2 data-i18n="feeding">Feeding log</h2><span style="font-size:11px;color:var(--mut)" id="feedToday"></span></div>
+        <div class="chips-row" style="margin:0 0 12px">
+          <button class="btn soft sm" data-feed="Breast">🤱 Breast</button>
+          <button class="btn soft sm" data-feed="Bottle">🍼 Bottle</button>
+          <button class="btn soft sm" data-feed="Mixed">Mixed</button>
+          <button class="btn soft sm" data-feed="Solids">🥣 Solids</button>
+        </div>
+        <div class="list" id="feedList"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head"><h2 data-i18n="immunisations">Immunisations</h2><span class="tag soon">MoHFW</span></div>
+        <p class="subtitle" style="font-size:12px">Aligned to India's national schedule. Always confirm with your paediatrician.</p>
+        <div class="list" id="immList" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <!-- ================= ASK ================= -->
+    <section class="screen" id="s-ask">
+      <div class="chat-wrap">
+        <div class="chat-head">
+          <div class="avatar">✚</div>
+          <div>
+            <b>Maternacare AI</b>
+            <span><i class="dot-live"></i><em style="font-style:normal" data-i18n="online">Online · evidence-based</em></span>
+          </div>
+          <button class="btn ghost sm" id="clearChat" style="margin-left:auto" data-i18n="clear">Clear</button>
+        </div>
+
+        <div class="chips" id="chatChips"></div>
+        <div class="chat-log" id="chatLog"></div>
+
+        <div class="chat-bar">
+          <textarea class="inp chat-inp" id="chatInput" rows="1" placeholder="Ask about symptoms, food, or what's due…" data-ph="chat_ph" aria-label="Message"></textarea>
+          <button class="send-btn" id="chatSend" aria-label="Send">➤</button>
+        </div>
+        <p style="font-size:10.5px;color:var(--mut);text-align:center;margin-top:6px" data-i18n="disclaim">
+          Educational only. Not a diagnosis. In an emergency call 102.
+        </p>
+      </div>
+    </section>
+
+    <!-- ================= LEARN ================= -->
+    <section class="screen" id="s-learn">
+      <h1 class="page-title" data-i18n="learn_title">Learn</h1>
+      <p class="subtitle" style="margin-bottom:14px" data-i18n="learn_sub">Short, practical guidance for your stage — plus tradition vs evidence.</p>
+
+      <div class="card">
+        <span class="eyebrow" data-i18n="for_stage">For your stage</span>
+        <div class="list" id="learnList" style="margin-top:6px"></div>
+      </div>
+
+      <div class="card">
+        <span class="eyebrow" data-i18n="tradition">Tradition vs evidence</span>
+        <p class="subtitle" style="font-size:12.5px;margin-bottom:12px" data-i18n="tradition_sub">We respect culture. Here's what evidence says — respectfully, safety first.</p>
+        <div id="tradList"></div>
+      </div>
+
+      <div class="card">
+        <div class="risk-note mint" data-i18n="sources">
+          <b>Sources:</b> WHO antenatal & newborn care guidance, UNICEF breastfeeding recommendations, India MoHFW/NHM immunisation schedule and safe-motherhood materials.
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SAFETY ================= -->
+    <section class="screen" id="s-safety">
+      <h1 class="page-title" data-i18n="safety_title">Safety</h1>
+      <p class="subtitle" style="margin-bottom:14px" data-i18n="safety_sub">Know the danger signs. Acting early saves lives.</p>
+
+      <div class="notice" style="margin-bottom:14px" data-i18n="emergency_now">
+        <b>Emergency now?</b> Heavy bleeding, trouble breathing, fits/convulsions, chest pain, reduced baby movement, or thoughts of harming yourself → go to the nearest emergency department or call 102.
+      </div>
+
+      <div class="card">
+        <span class="eyebrow" data-i18n="preg_danger">Pregnancy danger signs</span>
+        <div class="list" id="pregDanger" style="margin-top:6px"></div>
+      </div>
+
+      <div class="card">
+        <span class="eyebrow" data-i18n="baby_danger">Newborn & baby danger signs</span>
+        <div class="list" id="babyDanger" style="margin-top:6px"></div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size:15px;margin-bottom:8px" data-i18n="if_wrong">If something is wrong</h2>
+        <div class="list">
+          <div class="item"><div class="ib">1</div><div class="im"><b>Call for help first</b><span>102 ambulance · 108 emergency · your hospital's labour room</span></div></div>
+          <div class="item"><div class="ib">2</div><div class="im"><b>Go, don't wait</b><span>Do not wait for the next scheduled visit when a danger sign appears.</span></div></div>
+          <div class="item"><div class="ib">3</div><div class="im"><b>Carry your records</b><span>Take your ANC card, reports and medicines with you.</span></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <a class="btn primary full" href="tel:102" data-i18n="call">Call 102 ambulance</a>
+        <a class="btn ghost full" href="tel:108" style="margin-top:9px" data-i18n="call108">Call 108 emergency</a>
+      </div>
+    </section>
+
+    <!-- ================= MORE ================= -->
+    <section class="screen" id="s-more">
+      <h1 class="page-title" data-i18n="profile_title">Your profile</h1>
+      <p class="subtitle" style="margin-bottom:14px" data-i18n="profile_sub">Everything is stored privately on this device.</p>
+
+      <div class="card" id="profileCard"></div>
+
+      <div class="card">
+        <div class="section-head"><h2 data-i18n="care_calendar">Care calendar</h2><button class="link-btn" data-sheet="task" data-i18n="add">+ Add</button></div>
+        <div class="list" id="allTasks"></div>
+      </div>
+
+      <div class="card">
+        <button class="item" data-go="safety" style="width:100%;text-align:left">
+          <div class="ib" style="background:var(--red-soft)">!</div>
+          <div class="im"><b data-i18n="safety_title">Safety</b><span data-i18n="safety_sub">Know the danger signs. Acting early saves lives.</span></div>
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="section-head"><h2 data-i18n="your_data">Your data</h2></div>
+        <div class="list">
+          <button class="item" id="exportBtn" style="width:100%;text-align:left"><div class="ib">⬇</div><div class="im"><b data-i18n="backup">Backup my data</b><span data-i18n="backup_desc">Download a JSON copy</span></div></button>
+          <button class="item" id="importBtn" style="width:100%;text-align:left"><div class="ib">⬆</div><div class="im"><b data-i18n="restore">Restore backup</b><span data-i18n="restore_desc">Load a JSON file</span></div></button>
+          <button class="item" id="resetBtn" style="width:100%;text-align:left"><div class="ib">↺</div><div class="im"><b data-i18n="reset">Reset this device</b><span data-i18n="reset_desc">Clear all locally stored data</span></div></button>
+        </div>
+        <input type="file" id="importFile" accept="application/json" class="sr"/>
+      </div>
+
+      <div class="card">
+        <div class="risk-note" data-i18n="important_note">
+          <b>Important:</b> Maternacare AI is an educational prototype. It is not clinically validated, does not diagnose, and must never replace a qualified doctor, nurse or emergency service.
+        </div>
+        <p style="font-size:10.5px;color:var(--mut);margin-top:12px">v1.0 · Pink & White rebuild</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= BOTTOM NAV ================= -->
+  <nav class="nav" aria-label="Main">
+    <button data-go="home" class="on"><span>⌂</span><em data-i18n="nav_home">Home</em></button>
+    <button data-go="baby"><span>♡</span><em data-i18n="nav_baby">Baby</em></button>
+    <button data-go="ask" class="ask-btn"><span class="bubble">◌</span><em data-i18n="nav_ask">Ask</em></button>
+    <button data-go="learn"><span>✦</span><em data-i18n="nav_learn">Learn</em></button>
+    <button data-go="more"><span>☰</span><em data-i18n="nav_more">More</em></button>
   </nav>
-</header>
 
-<main class="main" id="main">
+  <!-- ================= SHEETS ================= -->
+  <div class="sheet-mask" id="mask"></div>
 
-<!-- AUTH -->
-<section id="authPage" class="page">
-  <div class="auth-hero"><div class="auth-hero-mark">✚</div><h1 data-i18n="welcome">Welcome</h1><p class="muted" data-i18n="tagline"></p></div>
-  <div class="card auth-card">
-    <div class="auth-tabs">
-      <button class="atb active" id="atPassword" data-i18n="sign_in_password">Sign in with password</button>
-      <button class="atb" id="atOtp" data-i18n="sign_in_otp">Continue with OTP</button>
-    </div>
-
-    <!-- Password mode -->
-    <div class="auth-mode" id="authModePassword">
-      <div class="seg"><button class="seg-b" id="segLogin" data-i18n="sign_in">Sign in</button><button class="seg-b active" id="segSignup" data-i18n="sign_up">Sign up</button></div>
-      <label class="f"><span data-i18n="email">Email or phone</span><input id="authId" placeholder="you@example.com or +919876543210" autocomplete="username"/></label>
-      <label class="f"><span data-i18n="password">Password</span><input type="password" id="authPass" autocomplete="current-password"/></label>
-      <button class="btn primary full ripple" id="authGo" data-i18n="sign_in">Sign in</button>
-      <p class="hint" id="authSwitchHint"></p>
-      <p class="hint" id="authErr"></p>
-    </div>
-
-    <!-- OTP mode: step 1 = phone -->
-    <div class="auth-mode hidden" id="authModeOtpPhone">
-      <p class="hint" data-i18n="otp_phone_hint"></p>
-      <label class="f"><span data-i18n="phone">Mobile number</span><input id="otpPhone" type="tel" placeholder="+91 98765 43210" inputmode="tel" autocomplete="tel"/></label>
-      <p class="hint muted" id="otpCountryHint" style="margin-top:-6px"></p>
-      <button class="btn primary full ripple" id="otpSend" data-i18n="send_otp">Send OTP</button>
-      <p class="hint" id="otpErr"></p>
-    </div>
-
-    <!-- OTP mode: step 2 = code -->
-    <div class="auth-mode hidden" id="authModeOtpCode">
-      <p class="hint" data-i18n="otp_code_hint"></p>
-      <div class="otp-inputs" id="otpInputs"></div>
-      <p class="hint" id="otpResend"><span data-i18n="otp_resend"></span> <span id="otpResendLink" style="color:#0d5c63;cursor:pointer;font-weight:700"></span></p>
-      <p class="hint" id="otpCodeErr"></p>
-      <div class="otp-actions">
-        <button class="btn ghost full" id="otpBack" data-i18n="back">← Back</button>
-        <button class="btn primary full ripple" id="otpVerify" data-i18n="verify_otp">Verify OTP</button>
-      </div>
-    </div>
+  <div class="sheet" id="sheetBox" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet-grip"></div>
+    <h3 id="sheetTitle">Title</h3>
+    <p class="sub" id="sheetSub"></p>
+    <div id="sheetBody"></div>
   </div>
-</section>
 
-<!-- ONBOARDING -->
-<section id="onboarding" class="page hidden">
-  <div class="card"><div class="step-head"><span class="step-n">1</span><div><h1 data-i18n="setup_title">Set up your journey</h1><p class="muted" data-i18n="setup_subtitle"></p></div></div>
-    <form id="setup">
-      <label class="f"><span data-i18n="stage">I am…</span><select id="sStage">
-        <option value="planning" data-i18n="stage_planning">Planning</option>
-        <option value="pregnant" data-i18n="stage_pregnant" selected>Pregnant</option>
-        <option value="postpartum" data-i18n="stage_postpartum">Postpartum</option>
-        <option value="baby" data-i18n="stage_baby">Baby / infant</option></select></label>
-      <div id="pregFields">
-        <label class="f"><span data-i18n="lmp">LMP</span><input type="date" id="sLmp"/></label>
-        <p class="hint" data-i18n="edd_info"></p>
-        <label class="f"><span data-i18n="edd">EDD (if known)</span><input type="date" id="sEdd"/></label>
-        <label class="f"><span data-i18n="weeks">Current week</span><input type="number" id="sWeeks" min="0" max="45"/></label>
-      </div>
-      <label class="f chk"><input type="checkbox" id="sFirst"/><span data-i18n="first_pregnancy">First pregnancy?</span></label>
-      <label class="f chk"><input type="checkbox" id="sRisk"/><span data-i18n="high_risk">High-risk?</span></label>
-      <p class="hint" data-i18n="risk_note"></p>
-      <label class="f"><span data-i18n="conditions">Conditions</span><input id="sCond"/></label>
-      <label class="f"><span data-i18n="medicines">Medicines</span><input id="sMed"/></label>
-      <label class="f"><span data-i18n="allergies">Allergies</span><input id="sAllergy"/></label>
-      <label class="f"><span data-i18n="doctor">Doctor / hospital</span><input id="sDoc"/></label>
-      <label class="f"><span data-i18n="emergency_contact">Emergency contact</span><input id="sEmer"/></label>
-      <label class="f chk consent"><input type="checkbox" id="sConsent" required/><span data-i18n="consent"></span></label>
-      <button class="btn primary full ripple" type="submit" data-i18n="save_start">Save & Start</button>
-    </form>
-  </div>
-</section>
+  <div class="toast-wrap" id="toasts"></div>
+</div>
 
-<!-- HOME — pink pregnancy dashboard (reference style) -->
-<section id="home" class="page hidden">
-  <div class="home-hero">
-    <div class="hh-top"><span class="hh-chip"><span class="dot"></span><span id="hChip">My Pregnancy</span></span><button class="hh-bell" data-tab="calendar" aria-label="Reminders">🔔</button></div>
-    <div class="hh-week"><div><b id="hWeek">Week 22</b><div class="hh-sub" id="hTri"></div></div><div class="hh-ring" id="hRing"><span id="hPct">0%</span></div></div>
-  </div>
-  <div class="daily-tracker">
-    <h3 data-i18n="daily_tracker">Daily Tracker</h3>
-    <p data-i18n="daily_tracker_desc">Log your Mood, Sleep, Water, Steps And See How You're Progressing</p>
-    <div class="big-ring" id="dRing"><span class="ring-label" id="dLabel">Day 85</span></div>
-    <div class="home-meta"><div><small data-i18n="edd_label">EDD</small><strong id="hEdd"></strong></div><div><small data-i18n="next_visit">Next visit</small><strong id="hNext"></strong></div></div>
-  </div>
-  <button class="pink-emer ripple" data-tab="safety"><span>🚨</span><span data-i18n="open_emergency">Emergency help</span><span>→</span></button>
-  <div class="card"><h2 data-i18n="quick_check">Quick safety check</h2><p class="muted" data-i18n="quick_check_desc"></p>
-    <form class="inline" id="quickF"><input id="quickIn" data-ph="symptom"/><button class="btn primary ripple" data-i18n="check_now">Check</button></form><div id="quickOut"></div></div>
-  <div class="card"><div class="ch"><h2 data-i18n="education">For your stage</h2><button class="link" data-tab="learn" data-i18n="nav_learn">Learn</button></div><div id="homeEdu"></div></div>
-  <div class="card"><div class="ch"><h2 data-i18n="calendar_title">Calendar</h2><button class="link" data-tab="calendar" data-i18n="nav_calendar">Calendar</button></div><div id="homeTasks"></div></div>
-</section>
-
-<section id="learn" class="page hidden"><div class="card"><h1 data-i18n="nav_learn">Learn</h1><p class="muted" id="learnLine"></p><p class="education-label" data-i18n="education_only"></p><div id="eduList" class="stagger"></div></div><div class="card"><p class="muted" data-i18n="sources"></p></div></section>
-<section id="trad" class="page hidden"><div class="card"><h1 data-i18n="trad_title">Tradition vs Evidence</h1><p class="muted" data-i18n="trad_desc"></p><p class="education-label" data-i18n="education_only"></p><input class="search" id="tradSearch" data-ph="trad_search"/><div id="tradList" class="stagger"></div></div></section>
-<section id="safety" class="page hidden"><div class="card emer-card"><h1>🚨 <span data-i18n="open_emergency"></span></h1><p class="emer-text" id="emerBanner"></p><p class="muted" id="emerLine"></p></div><p class="education-label" data-i18n="education_only"></p>
-  <div class="card"><h2 data-i18n="quick_check"></h2><p class="muted" data-i18n="quick_check_desc"></p><form class="inline" id="safetyF"><input id="safetyIn" data-ph="symptom"/><button class="btn danger ripple" data-i18n="check_now"></button></form><div id="safetyOut"></div></div></section>
-<section id="calendar" class="page hidden"><div class="card"><h1 data-i18n="calendar_title"></h1><p class="muted" data-i18n="calendar_desc"></p>
-  <div class="add"><input id="newTask" data-ph="task_name"/><input type="date" id="newDue"/><button class="btn primary ripple" id="addBtn" data-i18n="add"></button></div><div id="taskList" class="stagger"></div></div></section>
-
-<!-- BABY GROWTH — reference style -->
-<section id="baby" class="page hidden">
-  <div class="baby-hero">
-    <p class="eyebrow" id="babyWeekLabel">Week 22</p>
-    <h1 data-i18n="baby_hero_title">Every Movement as Your Little Miracle</h1>
-    <div class="baby-art">👶</div>
-    <div class="baby-metric"><small data-i18n="height">Height</small><strong id="babyHeight">19 cm</strong></div>
-  </div>
-  <div class="card">
-    <div class="ch"><h1 data-i18n="baby_title">My Baby</h1><button class="btn ghost" id="addBabyBtn" data-i18n="add_baby">+ Add baby</button></div>
-    <div id="babyList" class="stagger"></div>
-  </div>
-  <div id="babyDetail" class="hidden">
-    <div class="card">
-      <div class="seg-tabs" id="babyTabs">
-        <button class="active" data-bt="symptoms" data-i18n="symptoms">Symptoms</button>
-        <button data-bt="growth" data-i18n="growth">Growth</button>
-        <button data-bt="activity" data-i18n="activity">Activity</button>
-      </div>
-      <div id="bt-symptoms">
-        <h2 data-i18n="recent_symptoms">Recent Symptoms</h2>
-        <div class="symptom-ring"><span id="symCount">3 logged</span></div>
-        <div id="symptomMini"></div>
-      </div>
-      <div id="bt-growth" class="hidden">
-        <h2 data-i18n="growth">Growth monitoring</h2>
-        <p class="muted" data-i18n="growth_desc">Record weight, length and head circumference. Track over time.</p>
-        <div class="add">
-          <input type="date" id="gDate"/>
-          <input type="number" id="gWeight" data-ph="weight_g" step="1"/>
-          <input type="number" id="gLength" data-ph="length_cm" step="0.1"/>
-          <input type="number" id="gHead" data-ph="head_circ_cm" step="0.1"/>
-          <button class="btn primary ripple" id="addGrowth" data-i18n="add">Add</button>
-        </div>
-        <div id="growthList"></div>
-      </div>
-      <div id="bt-activity" class="hidden">
-        <div class="mini-cards">
-          <div class="mini-card" data-tab="chat"><span class="ic">💊</span><b data-i18n="prenatal_vitamins">Prenatal Vitamins</b><small>8:00 AM</small></div>
-          <div class="mini-card" data-tab="chat"><span class="ic">📈</span><b data-i18n="kick_count">Kick Count Session</b><small>8:30 PM</small></div>
-        </div>
-        <h2 style="margin-top:16px" data-i18n="feeding">Feeding log</h2>
-        <p class="muted" data-i18n="feeding_desc">Log a feeding session. Supports breastfeeding and more.</p>
-        <div class="add">
-          <select id="fType"><option value="breast" data-i18n="feed_breast">Breast</option><option value="bottle" data-i18n="feed_bottle">Bottle</option><option value="mixed" data-i18n="feed_mixed">Mixed</option><option value="solids" data-i18n="feed_solids">Solids</option></select>
-          <input type="date" id="fDate"/>
-          <input id="fNote" data-ph="notes"/>
-          <button class="btn primary ripple" id="addFeeding" data-i18n="add">Add</button>
-        </div>
-        <div id="feedingList"></div>
-      </div>
-    </div>
-    <div class="card">
-      <h2 data-i18n="immunizations">Immunizations</h2>
-      <p class="muted" data-i18n="imm_desc">MoHFW-aligned schedule based on date of birth. Mark doses as given.</p>
-      <div id="immList"></div>
-    </div>
-  </div>
-</section>
-
-<div class="sheet" id="babySheet" style="display:none"><div class="sheet-backdrop" data-close-sheet="babySheet"></div><div class="sheet-box">
-  <div class="sheet-handle"></div><h3 data-i18n="add_baby">Add baby</h3>
-  <label class="f"><span data-i18n="baby_name">Baby's name</span><input id="bName"/></label>
-  <label class="f"><span data-i18n="dob">Date of birth</span><input type="date" id="bDob"/></label>
-  <label class="f"><span data-i18n="sex">Sex</span><select id="bSex"><option value="">—</option><option value="male" data-i18n="male">Male</option><option value="female" data-i18n="female">Female</option></select></label>
-  <label class="f"><span data-i18n="birth_weight">Birth weight (g)</span><input type="number" id="bWeight"/></label>
-  <button class="btn primary full ripple" id="saveBaby" data-i18n="add_baby">Add baby</button>
-</div></div>
-<section id="chat" class="page hidden"><div class="card chat-card">
-  <div class="chat-head"><button class="chat-back" data-tab="home" aria-label="Back">←</button><span class="doctor-avatar">👩‍⚕️</span><div><h1 data-i18n="chat_title"></h1><p class="muted" data-i18n="chat_desc"></p></div></div>
-  <div class="chat-quick"><button data-quick="symptom">🩺 Symptoms</button><button data-quick="food">🥗 Diet</button><button data-quick="vaccine">💉 Vaccines</button><button data-quick="tradition">🌿 Traditions</button></div>
-  <div class="log" id="log"></div>
-  <form class="chat-input-row" id="chatF"><input id="chatIn" data-ph="chat_placeholder" autocomplete="off"/><button class="chat-send" type="submit" aria-label="Send">➤</button></form>
-</div></section>
-<section id="sub" class="page hidden"><div class="card"><h1 data-i18n="manage_sub">Subscription</h1><div id="subStatus"></div>
-  <h2 data-i18n="choose_plan">Choose a plan</h2><div class="plans" id="subPlans"></div><p class="hint" data-i18n="payment_note"></p>
-  <button class="btn ghost full ripple" id="signOutBtn" data-i18n="sign_out">Sign out</button></div></section>
-</main>
-
-<!-- Bottom pill navigation (reference style) -->
-<nav class="bottom-nav" id="bottomNav">
-  <button data-tab="home" class="active" aria-label="Home">⌂</button>
-  <button data-tab="baby" aria-label="Baby">👶</button>
-  <button data-tab="chat" aria-label="Ask">👩‍⚕️</button>
-  <button data-tab="calendar" aria-label="Calendar">▦</button>
-  <button data-tab="safety" aria-label="Safety">🛡</button>
-</nav>
-
-<footer class="footer"><p id="foot"></p></footer>
-<div class="toast" id="toast"></div>
-
-<div class="sheet" id="feedbackSheet" style="display:none"><div class="sheet-backdrop" data-close-sheet="feedbackSheet"></div><div class="sheet-box">
-  <div class="sheet-handle"></div><h3 data-i18n="report_issue"></h3><p class="muted" data-i18n="report_desc"></p>
-  <textarea id="fbText" rows="4"></textarea><button class="btn primary full ripple" id="fbSend" data-i18n="send_feedback"></button></div></div>
-
-<div class="sheet" id="gate" style="display:none"><div class="sheet-backdrop" data-close-sheet="gate"></div><div class="sheet-box">
-  <div class="sheet-handle"></div><div class="gate-mark">✚</div><h2 data-i18n="sub_title">Unlock full access</h2><p class="muted" data-i18n="sub_desc"></p>
-  <div class="plans" id="gatePlans"></div><p class="hint" data-i18n="payment_note"></p></div></div>
-
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="engine.js"></script><script src="app.js"></script>
+<script src="app.js?v=11" defer></script>
 </body>
 </html>

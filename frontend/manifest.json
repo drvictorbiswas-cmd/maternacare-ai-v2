@@ -1,13 +1,13 @@
 {
   "name": "Maternacare AI — Maternal & Child Health Companion",
   "short_name": "Maternacare",
-  "description": "Offline maternal and child health education, safety triage and care reminders.",
+  "description": "Calm, evidence-based guidance from pregnancy to baby's first years.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f4f7f6",
-  "theme_color": "#0d5c63",
+  "background_color": "#FFF9FB",
+  "theme_color": "#D64578",
   "lang": "en",
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
