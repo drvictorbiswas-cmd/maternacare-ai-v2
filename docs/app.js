@@ -1278,8 +1278,10 @@ async function testAIKey() {
     if (ok) { if (st) st.textContent = '✓ Key works!'; toast('Key works!'); }
     else { if (st) st.textContent = '✗ ' + String(msg).slice(0, 60); toast('Key test failed'); }
   } catch (e) {
-    if (st) st.textContent = '✗ Network error';
-    toast('Network error');
+    const msg = (e && (e.message || e.name)) || 'unknown';
+    if (st) st.textContent = '✗ Network error: ' + msg;
+    toast('Network error: ' + msg);
+    console.error('Test key failed:', e);
   }
 }
 $('#gemTest') && $('#gemTest').addEventListener('click', testAIKey);
