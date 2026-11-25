@@ -207,7 +207,16 @@
       <div class="card">
         <div class="section-head"><h2 data-i18n="agent_key">AI assistant key</h2></div>
         <p class="subtitle" style="font-size:12px" data-i18n="agent_key_hint">Stored only on this device. Anyone with access to this browser can read it.</p>
-        <div class="field"><input class="inp" id="gemKey" type="password" placeholder="Paste your Gemini API key" autocomplete="off"/></div>
+        <div class="field"><label>Provider</label><select class="inp" id="aiProvider">
+          <option value="gemini">Google Gemini</option>
+          <option value="openai">OpenAI-compatible (Groq / OpenRouter / OpenAI)</option>
+        </select></div>
+        <div class="field" id="openaiFields" style="display:none">
+          <label>API endpoint</label><input class="inp" id="aiEndpoint" placeholder="https://api.groq.com/openai/v1/chat/completions"/>
+          <label style="margin-top:8px">Model</label><input class="inp" id="aiModel" placeholder="llama-3.3-70b-versatile"/>
+          <p style="font-size:11px;color:var(--mut);margin-top:6px">Get a free Groq key at <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com</a> · OpenRouter at <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai</a></p>
+        </div>
+        <div class="field"><label>API key</label><input class="inp" id="gemKey" type="password" placeholder="Paste your API key" autocomplete="off"/></div>
         <div class="row">
           <button class="btn soft full" id="gemSave">Save key</button>
           <button class="btn ghost full" id="gemTest">Test key</button>

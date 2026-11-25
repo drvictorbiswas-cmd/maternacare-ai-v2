@@ -1024,8 +1024,22 @@ const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash
 let agentHistory = [];
 let agentBusy = false;
 
-function geminiKey() { try { return (localStorage.getItem('mc_gemini_key') || DEFAULT_GEMINI_KEY).trim(); } catch (e) { return DEFAULT_GEMINI_KEY; } }
-function setGeminiKey(k) { try { if (k) localStorage.setItem('mc_gemini_key', k.trim()); else localStorage.removeItem('mc_gemini_key'); return true; } catch (e) { toast('Could not save key: ' + e.message); return false; } }
+function aiProvider() { try { return localStorage.getItem('mc_ai_provider') || 'gemini'; } catch (e) { return 'gemini'; } }
+function aiKey() { try { return (localStorage.getItem('mc_ai_key') || localStorage.getItem('mc_gemini_key') || DEFAULT_GEMINI_KEY || '').trim(); } catch (e) { return ''; } }
+function aiEndpoint() { try { return localStorage.getItem('mc_ai_endpoint') || 'https://api.groq.com/openai/v1/chat/completions'; } catch (e) { return 'https://api.groq.com/openai/v1/chat/completions'; } }
+function aiModel() { try { return localStorage.getItem('mc_ai_model') || 'llama-3.3-70b-versatile'; } catch (e) { return 'llama-3.3-70b-versatile'; } }
+function setAIConfig(p, k, e, m) {
+  try {
+    if (p) localStorage.setItem('mc_ai_provider', p);
+    if (k) localStorage.setItem('mc_ai_key', k.trim()); else localStorage.removeItem('mc_ai_key');
+    if (e) localStorage.setItem('mc_ai_endpoint', e.trim());
+    if (m) localStorage.setItem('mc_ai_model', m.trim());
+    return true;
+  } catch (err) { toast('Could not save: ' + err.message); return false; }
+}
+// backward compat alias
+function geminiKey() { return aiKey(); }
+function setGeminiKey(k) { return setAIConfig(null, k, null, null); }
 
 const AGENT_SYSTEM = `You are Maternacare AI, a warm, calm assistant for pregnant people, new mothers and families.
 Rules:
@@ -1093,42 +1107,80 @@ async function agentSend(text) {
     parts: [{ text: m.text || (m.html ? m.html.replace(/<[^>]+>/g, ' ') : '') }]
   }));
 
+  const provider = aiProvider();
+  const recentMsgs = recent.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text || (m.html ? m.html.replace(/<[^>]+>/g, ' ') : '') }));
   let lastErr = '';
   let ok = false;
-  for (const model of GEMINI_MODELS) {
-    if (ok) break;
-    for (let attempt = 0; attempt < 2 && !ok; attempt++) {
-      try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: AGENT_SYSTEM }] },
-            contents,
-            tools: [{ google_search: {} }],
-            generationConfig: { temperature: 0.5, maxOutputTokens: 700 }
-          })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          lastErr = (data && data.error && data.error.message) || ('HTTP ' + res.status);
-          if (res.status === 503 && attempt === 0) { await new Promise(r => setTimeout(r, 1000)); continue; }
+  if (provider === 'gemini') {
+    for (const model of GEMINI_MODELS) {
+      if (ok) break;
+      for (let attempt = 0; attempt < 2 && !ok; attempt++) {
+        try {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              systemInstruction: { parts: [{ text: AGENT_SYSTEM }] },
+              contents,
+              tools: [{ google_search: {} }],
+              generationConfig: { temperature: 0.5, maxOutputTokens: 700 }
+            })
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            lastErr = (data && data.error && data.error.message) || ('HTTP ' + res.status);
+            if (res.status === 503 && attempt === 0) { await new Promise(r => setTimeout(r, 1000)); continue; }
+            break;
+          }
+          const txt = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) || '';
+          if (txt) {
+            typing.remove();
+            agentHistory.push({ role: 'model', html: esc(txt).replace(/\n/g, '<br/>') });
+            ok = true;
+          } else {
+            lastErr = 'Empty response';
+            break;
+          }
+        } catch (e) {
+          lastErr = e.message || 'network error';
+          if (attempt === 0) { await new Promise(r => setTimeout(r, 1000)); continue; }
           break;
         }
-        const txt = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) || '';
+      }
+    }
+  } else {
+    // OpenAI-compatible (Groq, OpenRouter, OpenAI, etc.)
+    try {
+      const res = await fetch(aiEndpoint(), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + key,
+          'HTTP-Referer': location.origin || 'https://drvictorbiswas-cmd.github.io',
+          'X-Title': 'Maternacare AI'
+        },
+        body: JSON.stringify({
+          model: aiModel(),
+          messages: [{ role: 'system', content: AGENT_SYSTEM }].concat(recentMsgs),
+          temperature: 0.5,
+          max_tokens: 700
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        lastErr = (data && data.error && (data.error.message || data.error)) || ('HTTP ' + res.status);
+      } else {
+        const txt = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
         if (txt) {
           typing.remove();
           agentHistory.push({ role: 'model', html: esc(txt).replace(/\n/g, '<br/>') });
           ok = true;
         } else {
           lastErr = 'Empty response';
-          break;
         }
-      } catch (e) {
-        lastErr = e.message || 'network error';
-        if (attempt === 0) { await new Promise(r => setTimeout(r, 1000)); continue; }
-        break;
       }
+    } catch (e) {
+      lastErr = e.message || 'network error';
     }
   }
   if (!ok) {
@@ -1161,37 +1213,60 @@ function renderAgentChips() {
 }
 // Gemini key settings
 function refreshGemKeyUI() {
-  const el = $('#gemKey'); if (!el) return;
-  el.value = localStorage.getItem('mc_gemini_key') || '';
-  const st = $('#gemStatus'); if (st) st.textContent = geminiKey() ? 'Key active' : 'No key set';
+  const prov = $('#aiProvider'); if (prov) prov.value = aiProvider();
+  const ep = $('#aiEndpoint'); if (ep) ep.value = localStorage.getItem('mc_ai_endpoint') || '';
+  const md = $('#aiModel'); if (md) md.value = localStorage.getItem('mc_ai_model') || '';
+  const el = $('#gemKey'); if (el) el.value = localStorage.getItem('mc_ai_key') || localStorage.getItem('mc_gemini_key') || '';
+  const st = $('#gemStatus'); if (st) st.textContent = aiKey() ? 'Key active (' + aiProvider() + ')' : 'No key set';
+  const of = $('#openaiFields'); if (of) of.style.display = aiProvider() === 'openai' ? '' : 'none';
 }
-$('#gemSave') && $('#gemSave').addEventListener('click', () => { setGeminiKey($('#gemKey').value); refreshGemKeyUI(); toast(tr('toast_saved')); });
+$('#aiProvider') && $('#aiProvider').addEventListener('change', () => {
+  const of = $('#openaiFields'); if (of) of.style.display = $('#aiProvider').value === 'openai' ? '' : 'none';
+});
+$('#gemSave') && $('#gemSave').addEventListener('click', () => {
+  const p = $('#aiProvider') ? $('#aiProvider').value : 'gemini';
+  const k = $('#gemKey') ? $('#gemKey').value : '';
+  const e = $('#aiEndpoint') ? $('#aiEndpoint').value : '';
+  const m = $('#aiModel') ? $('#aiModel').value : '';
+  setAIConfig(p, k, e, m);
+  refreshGemKeyUI();
+  toast(tr('toast_saved'));
+});
 $('#gemClear') && $('#gemClear').addEventListener('click', () => { setGeminiKey(''); refreshGemKeyUI(); toast(tr('toast_reset')); });
 
-async function testGeminiKey() {
-  const key = (geminiKey() || '').trim();
+async function testAIKey() {
+  const key = aiKey();
   const st = $('#gemStatus');
   if (!key) { if (st) st.textContent = 'No key to test'; return; }
   if (st) st.textContent = 'Testing…';
+  const prov = aiProvider();
   try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(key)}`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Reply with exactly: OK' }] }], generationConfig: { maxOutputTokens: 8 } })
-    });
-    const data = await res.json();
-    if (res.ok && data.candidates && data.candidates[0]) {
-      if (st) st.textContent = '✓ Key works!';
-      toast('Key works!');
+    let ok = false, msg = '';
+    if (prov === 'gemini') {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(key)}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Reply with exactly: OK' }] }], generationConfig: { maxOutputTokens: 8 } })
+      });
+      const data = await res.json();
+      ok = res.ok && data.candidates && data.candidates[0];
+      msg = ok ? '' : ((data.error && data.error.message) || ('HTTP ' + res.status));
     } else {
-      if (st) st.textContent = '✗ ' + ((data.error && data.error.message) || ('HTTP ' + res.status)).slice(0, 60);
-      toast('Key test failed');
+      const res = await fetch(aiEndpoint(), {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+        body: JSON.stringify({ model: aiModel(), messages: [{ role: 'user', content: 'Reply with exactly: OK' }], max_tokens: 8 })
+      });
+      const data = await res.json();
+      ok = res.ok && data.choices && data.choices[0];
+      msg = ok ? '' : ((data.error && (data.error.message || data.error)) || ('HTTP ' + res.status));
     }
+    if (ok) { if (st) st.textContent = '✓ Key works!'; toast('Key works!'); }
+    else { if (st) st.textContent = '✗ ' + String(msg).slice(0, 60); toast('Key test failed'); }
   } catch (e) {
     if (st) st.textContent = '✗ Network error';
     toast('Network error');
   }
 }
-$('#gemTest') && $('#gemTest').addEventListener('click', testGeminiKey);
+$('#gemTest') && $('#gemTest').addEventListener('click', testAIKey);
 
 // Floating agent
 $('#fabAgent') && $('#fabAgent').addEventListener('click', openAgent);
